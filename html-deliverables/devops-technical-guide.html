@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CloudGuard — DevOps Build Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D1117;--bg2:#161B22;--bg3:#21262D;--bg4:#30363D;
+  --border:#30363D;--border2:#484F58;
+  --text:#E6EDF3;--text2:#8B949E;--text3:#6E7681;
+  --green:#3FB950;--green-bg:rgba(63,185,80,.1);--green-border:rgba(63,185,80,.3);
+  --blue:#58A6FF;--blue-bg:rgba(88,166,255,.08);--blue-border:rgba(88,166,255,.25);
+  --amber:#E3B341;--amber-bg:rgba(227,179,65,.08);--amber-border:rgba(227,179,65,.25);
+  --purple:#BC8CFF;--purple-bg:rgba(188,140,255,.08);
+  --red:#F85149;--red-bg:rgba(248,81,73,.08);
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+  --radius:8px;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6}
+
+/* NAV */
+nav{
+  background:rgba(13,17,23,.95);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.nav-logo{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:8px}
+.nav-logo::before{content:'$';color:var(--text3)}
+.nav-tabs{display:flex;gap:2px}
+.nav-tab{
+  font-size:12px;color:var(--text2);padding:6px 12px;border-radius:6px;
+  cursor:pointer;border:none;background:transparent;font-family:var(--font);
+  transition:all .15s;
+}
+.nav-tab:hover{background:var(--bg3);color:var(--text)}
+.nav-tab.active{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 52px)}
+
+/* SIDEBAR */
+.sidebar{
+  background:var(--bg2);border-right:1px solid var(--border);
+  padding:20px 0;position:sticky;top:52px;height:calc(100vh - 52px);
+  overflow-y:auto;
+}
+.sidebar-section{margin-bottom:8px}
+.sidebar-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;padding:8px 16px 4px}
+.sidebar-item{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 16px;font-size:12px;color:var(--text2);
+  cursor:pointer;transition:all .15s;border-left:2px solid transparent;
+}
+.sidebar-item:hover{background:var(--bg3);color:var(--text)}
+.sidebar-item.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue)}
+.sidebar-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* MAIN */
+.main{padding:32px;max-width:900px}
+.page{display:none}
+.page.active{display:block}
+
+/* SECTION HEADERS */
+.page-title{font-size:22px;font-weight:600;color:var(--text);margin-bottom:6px;letter-spacing:-.3px}
+.page-sub{font-size:14px;color:var(--text2);margin-bottom:32px;line-height:1.6}
+
+/* CODE BLOCKS */
+.code-block{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;margin:16px 0;
+}
+.code-header{
+  background:var(--bg3);border-bottom:1px solid var(--border);
+  padding:8px 14px;display:flex;align-items:center;justify-content:space-between;
+}
+.code-filename{font-family:var(--mono);font-size:11px;color:var(--text2)}
+.code-lang{font-size:10px;color:var(--text3);background:var(--bg4);padding:2px 6px;border-radius:4px;font-family:var(--mono)}
+.code-copy{font-size:11px;color:var(--text3);background:none;border:1px solid var(--border);border-radius:4px;padding:3px 8px;cursor:pointer;font-family:var(--font);transition:all .15s}
+.code-copy:hover{color:var(--text);border-color:var(--border2)}
+pre{padding:16px;overflow-x:auto;font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--text)}
+.kw{color:var(--purple)} .str{color:var(--green)} .cm{color:var(--text3);font-style:italic}
+.fn{color:var(--blue)} .num{color:var(--amber)} .key{color:var(--blue)}
+.op{color:var(--text2)} .var{color:var(--red)}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.card-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card-body{font-size:13px;color:var(--text2);line-height:1.7}
+
+/* ARCH DIAGRAM */
+.arch{display:grid;grid-template-columns:1fr;gap:0;margin:20px 0}
+.arch-row{display:flex;align-items:center;gap:0;margin-bottom:0}
+.arch-box{
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
+  padding:10px 16px;font-size:12px;font-family:var(--mono);
+  color:var(--text);white-space:nowrap;
+}
+.arch-box.green{border-color:var(--green-border);background:var(--green-bg);color:var(--green)}
+.arch-box.blue{border-color:var(--blue-border);background:var(--blue-bg);color:var(--blue)}
+.arch-box.amber{border-color:var(--amber-border);background:var(--amber-bg);color:var(--amber)}
+.arch-box.purple{border-color:rgba(188,140,255,.3);background:var(--purple-bg);color:var(--purple)}
+.arch-arrow{color:var(--text3);font-size:16px;padding:0 8px;flex-shrink:0}
+.arch-group{display:flex;flex-direction:column;gap:8px}
+.arch-label{font-size:10px;color:var(--text3);font-family:var(--mono);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+
+/* GRID LAYOUTS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0}
+
+/* BADGES */
+.badge{display:inline-block;font-size:10px;font-weight:500;font-family:var(--mono);padding:2px 8px;border-radius:20px}
+.badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
+.badge-amber{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.badge-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(248,81,73,.3)}
+
+/* STEP LIST */
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:16px;padding-bottom:24px;position:relative}
+.step:not(:last-child)::before{content:'';position:absolute;left:11px;top:24px;bottom:0;width:1px;background:var(--border)}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--mono)}
+.step-content{flex:1}
+.step-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px}
+.step-desc{font-size:12px;color:var(--text2);line-height:1.6}
+
+/* ALERT BOXES */
+.alert{border-radius:var(--radius);padding:12px 16px;margin:16px 0;font-size:12px;line-height:1.6;border-left:3px solid}
+.alert-green{background:var(--green-bg);border-color:var(--green);color:#7EE787}
+.alert-blue{background:var(--blue-bg);border-color:var(--blue);color:#79C0FF}
+.alert-amber{background:var(--amber-bg);border-color:var(--amber);color:#E3B341}
+.alert b{font-weight:500}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:12px}
+th{text-align:left;padding:8px 12px;font-weight:500;color:var(--text2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px}
+td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:11px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+
+h3{font-size:14px;font-weight:500;color:var(--text);margin:24px 0 10px}
+h4{font-size:12px;font-weight:500;color:var(--text2);margin:16px 0 6px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em}
+
+.divider{height:1px;background:var(--border);margin:28px 0}
+
+@media(max-width:700px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">cloudguard / build-guide</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('arch',this)">Architecture</button>
+    <button class="nav-tab" onclick="showPage('aws',this)">AWS Integration</button>
+    <button class="nav-tab" onclick="showPage('stripe',this)">Stripe</button>
+    <button class="nav-tab" onclick="showPage('cicd',this)">CI/CD</button>
+    <button class="nav-tab" onclick="showPage('cost',this)">Infra Cost</button>
+  </div>
+</nav>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <div class="sidebar-item active" onclick="showPage('arch',null);setSidebar(this)"><div class="sidebar-dot" style="background:var(--green)"></div>System overview</div>
+    <div class="sidebar-item" onclick="showPage('arch',null);setSidebar(this)"><div class="sidebar-dot" style="background:var(--blue)"></div>Tech stack</div>
+    <div class="sidebar-item" onclick="showPage('arch',null);setSidebar(this)"><div class="sidebar-dot" style="background:var(--amber)"></div>IAM cross-account</div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">AWS Integration</div>
+    <div class="sidebar-item" onclick="showPage('aws',null);setSidebar(this)"><div class="sidebar-dot" style="background:var(--blue)"></div>Cost Explorer API</div>
+    <div class="sidebar-item" onclick="showPage('aws',null);setSidebar(this)"><div class="sidebar-dot" style="background:var(--purple)"></div>CloudWatch pull</div>
+    <div class="sidebar-item" onclick="showPage('aws',null);setSidebar(this)"><div class="sidebar-dot" style="background:var(--green)"></div>Lambda scheduler</div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Payments</div>
+    <div class="sidebar-item" onclick="showPage('stripe',null);setSidebar(this)"><div class="sidebar-dot" style="background:var(--green)"></div>Stripe webhook</div>
+    <div class="sidebar-item" onclick="showPage('stripe',null);setSidebar(this)"><div class="sidebar-dot" style="background:var(--blue)"></div>Subscription flow</div>
+    <div class="sidebar-item" onclick="showPage('stripe',null);setSidebar(this)"><div class="sidebar-dot" style="background:var(--amber)"></div>Razorpay (India)</div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">DevOps</div>
+    <div class="sidebar-item" onclick="showPage('cicd',null);setSidebar(this)"><div class="sidebar-dot" style="background:var(--purple)"></div>GitHub Actions</div>
+    <div class="sidebar-item" onclick="showPage('cicd',null);setSidebar(this)"><div class="sidebar-dot" style="background:var(--blue)"></div>Terraform modules</div>
+    <div class="sidebar-item" onclick="showPage('cicd',null);setSidebar(this)"><div class="sidebar-dot" style="background:var(--green)"></div>ECS deployment</div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Cost</div>
+    <div class="sidebar-item" onclick="showPage('cost',null);setSidebar(this)"><div class="sidebar-dot" style="background:var(--amber)"></div>Monthly AWS spend</div>
+    <div class="sidebar-item" onclick="showPage('cost',null);setSidebar(this)"><div class="sidebar-dot" style="background:var(--green)"></div>Break-even calc</div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+<!-- ═══════════ ARCHITECTURE PAGE ═══════════ -->
+<div class="page active" id="page-arch">
+  <div class="page-title">System architecture</div>
+  <div class="page-sub">Serverless-first on AWS. You already know this stack. Zero new tools to learn.</div>
+
+  <div class="alert alert-green"><b>Design principle:</b> Everything runs in YOUR AWS account. Customers grant read-only cross-account IAM access. You never touch their infra — you only read billing + CloudWatch metrics.</div>
+
+  <h3>Full system flow</h3>
+  <div class="card">
+    <div style="font-family:var(--mono);font-size:11px;line-height:2;color:var(--text2)">
+<pre style="padding:0;background:none;border:none">
+<span style="color:var(--amber)">CUSTOMER AWS ACCOUNT</span>          <span style="color:var(--text3)">────────────────────────────────────────</span>   <span style="color:var(--blue)">YOUR AWS ACCOUNT (SaaS)</span>
+┌─────────────────────┐                                               ┌──────────────────────────────────┐
+│  IAM Role           │  sts:AssumeRole (read-only)                  │                                  │
+│  (cross-account)    │ ─────────────────────────────────────────►   │  Lambda: data-collector          │
+│                     │                                               │  (runs every 24h via EventBridge)│
+│  Cost Explorer API  │ ◄── ce:GetCostAndUsage ──────────────────────│                                  │
+│  CloudWatch Metrics │ ◄── cloudwatch:GetMetricData ────────────────│                                  │
+└─────────────────────┘                                               │         │                        │
+                                                                      │         ▼                        │
+                                                                      │  RDS PostgreSQL (data store)     │
+                                                                      │         │                        │
+                                                                      │         ▼                        │
+                                                                      │  Lambda: alert-engine            │
+                                                                      │  (checks thresholds)             │
+                                                                      │         │                        │
+                                                                      │    ┌────┴────┐                   │
+                                                                      │    ▼         ▼                   │
+                                                                      │  SES      SNS→WhatsApp           │
+                                                                      │  (email)  (via Twilio)           │
+                                                                      └──────────────────────────────────┘
+                                                                               │
+                                                                               ▼
+                                                                      ┌──────────────────┐
+                                                                      │  React Frontend   │
+                                                                      │  (S3 + CloudFront)│
+                                                                      │  FastAPI backend  │
+                                                                      │  (ECS Fargate)    │
+                                                                      └──────────────────┘
+</pre>
+    </div>
+  </div>
+
+  <h3>Tech stack decision</h3>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="badge badge-blue">Backend</span></div>
+      <div class="card-body">
+        <table style="margin:0">
+          <tr><td style="color:var(--text)">Language</td><td>Python 3.12</td></tr>
+          <tr><td style="color:var(--text)">Framework</td><td>FastAPI</td></tr>
+          <tr><td style="color:var(--text)">Runtime</td><td>ECS Fargate + Lambda</td></tr>
+          <tr><td style="color:var(--text)">Database</td><td>RDS PostgreSQL (t3.micro)</td></tr>
+          <tr><td style="color:var(--text)">Cache</td><td>ElastiCache Redis (t3.micro)</td></tr>
+          <tr><td style="color:var(--text)">Auth</td><td>Cognito User Pools</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="badge badge-green">Frontend</span></div>
+      <div class="card-body">
+        <table style="margin:0">
+          <tr><td style="color:var(--text)">Framework</td><td>React 18 + Vite</td></tr>
+          <tr><td style="color:var(--text)">Charts</td><td>Recharts</td></tr>
+          <tr><td style="color:var(--text)">Hosting</td><td>S3 + CloudFront</td></tr>
+          <tr><td style="color:var(--text)">Auth</td><td>Cognito Hosted UI</td></tr>
+          <tr><td style="color:var(--text)">State</td><td>React Query + Zustand</td></tr>
+          <tr><td style="color:var(--text)">CSS</td><td>Tailwind CSS</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <h3>IAM cross-account role (what customer runs in their account)</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">customer-iam-role.tf</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="code-lang">terraform</span>
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+      </div>
+    </div>
+    <pre><span class="cm"># Customer runs this one-time in their AWS account</span>
+<span class="cm"># You provide this as a Terraform snippet or CloudFormation template</span>
+
+<span class="kw">resource</span> <span class="str">"aws_iam_role"</span> <span class="str">"cloudguard_readonly"</span> {
+  name = <span class="str">"CloudGuardReadOnly"</span>
+
+  assume_role_policy = <span class="fn">jsonencode</span>({
+    Version = <span class="str">"2012-10-17"</span>
+    Statement = [{
+      Action    = <span class="str">"sts:AssumeRole"</span>
+      Effect    = <span class="str">"Allow"</span>
+      Principal = {
+        <span class="cm"># YOUR SaaS account ID — hardcoded so only you can assume</span>
+        AWS = <span class="str">"arn:aws:iam::YOUR_SAAS_ACCOUNT_ID:role/cloudguard-collector"</span>
+      }
+      Condition = {
+        StringEquals = {
+          <span class="str">"sts:ExternalId"</span> = <span class="str">"&lt;unique-per-customer-uuid&gt;"</span>  <span class="cm"># Security!</span>
+        }
+      }
+    }]
+  })
+}
+
+<span class="kw">resource</span> <span class="str">"aws_iam_role_policy"</span> <span class="str">"cloudguard_policy"</span> {
+  role = aws_iam_role.cloudguard_readonly.id
+  policy = <span class="fn">jsonencode</span>({
+    Version = <span class="str">"2012-10-17"</span>
+    Statement = [
+      {
+        Effect = <span class="str">"Allow"</span>
+        Action = [
+          <span class="str">"ce:GetCostAndUsage"</span>,          <span class="cm"># Cost Explorer — main data</span>
+          <span class="str">"ce:GetCostForecast"</span>,          <span class="cm"># Month-end projections</span>
+          <span class="str">"ce:GetReservationUtilization"</span>, <span class="cm"># Reserved instance waste</span>
+          <span class="str">"cloudwatch:GetMetricData"</span>,     <span class="cm"># CPU/memory utilisation</span>
+          <span class="str">"cloudwatch:ListMetrics"</span>,
+          <span class="str">"ec2:DescribeInstances"</span>,        <span class="cm"># Find idle EC2s</span>
+          <span class="str">"ec2:DescribeVolumes"</span>,          <span class="cm"># Unattached EBS volumes</span>
+          <span class="str">"rds:DescribeDBInstances"</span>,      <span class="cm"># Idle RDS instances</span>
+          <span class="str">"s3:GetBucketLocation"</span>,
+          <span class="str">"tag:GetResources"</span>             <span class="cm"># Resource tagging data</span>
+        ]
+        Resource = <span class="str">"*"</span>
+      }
+    ]
+  })
+}</pre>
+  </div>
+
+  <div class="alert alert-amber"><b>External ID pattern:</b> Generate a UUID per customer when they onboard. Store it in your DB. Pass it in AssumeRole calls. This prevents confused deputy attacks — a critical security requirement.</div>
+
+  <h3>Folder structure (monorepo)</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">project structure</span>
+      <span class="code-lang">bash</span>
+    </div>
+    <pre>cloudguard/
+├── <span class="key">backend/</span>
+│   ├── app/
+│   │   ├── api/           <span class="cm"># FastAPI routers</span>
+│   │   ├── services/
+│   │   │   ├── aws_collector.py    <span class="cm"># Pulls from Cost Explorer</span>
+│   │   │   ├── alert_engine.py     <span class="cm"># Threshold checks</span>
+│   │   │   └── stripe_service.py   <span class="cm"># Payment events</span>
+│   │   ├── models/        <span class="cm"># SQLAlchemy ORM</span>
+│   │   └── core/          <span class="cm"># Config, DB, Auth</span>
+│   ├── lambdas/
+│   │   ├── data_collector/ <span class="cm"># EventBridge → runs daily</span>
+│   │   └── alert_sender/   <span class="cm"># Triggered by collector</span>
+│   ├── Dockerfile
+│   └── requirements.txt
+├── <span class="key">frontend/</span>
+│   ├── src/
+│   │   ├── pages/         <span class="cm"># Dashboard, Alerts, Settings</span>
+│   │   ├── components/
+│   │   └── hooks/         <span class="cm"># useAWSData, useAlerts</span>
+│   └── package.json
+├── <span class="key">infrastructure/</span>
+│   ├── terraform/
+│   │   ├── main.tf
+│   │   ├── ecs.tf
+│   │   ├── rds.tf
+│   │   ├── cognito.tf
+│   │   └── lambdas.tf
+│   └── customer-role/     <span class="cm"># Terraform snippet you give customers</span>
+└── <span class="key">.github/workflows/</span>
+    ├── deploy-prod.yml
+    └── deploy-staging.yml</pre>
+  </div>
+</div>
+
+<!-- ═══════════ AWS INTEGRATION PAGE ═══════════ -->
+<div class="page" id="page-aws">
+  <div class="page-title">AWS integration</div>
+  <div class="page-sub">The core of your product. You know all these APIs already — this is just packaging them as a service.</div>
+
+  <h3>Data collector Lambda — main logic</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">lambdas/data_collector/handler.py</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="code-lang">python</span>
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+      </div>
+    </div>
+    <pre><span class="kw">import</span> boto3
+<span class="kw">import</span> json
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+<span class="kw">from</span> app.models <span class="kw">import</span> Customer, CostRecord
+<span class="kw">from</span> app.core.db <span class="kw">import</span> get_db
+
+<span class="kw">def</span> <span class="fn">assume_customer_role</span>(customer: Customer):
+    <span class="str">"""Assume the cross-account IAM role for a customer."""</span>
+    sts = boto3.client(<span class="str">'sts'</span>)
+    response = sts.assume_role(
+        RoleArn=<span class="fn">f</span><span class="str">"arn:aws:iam::{customer.aws_account_id}:role/CloudGuardReadOnly"</span>,
+        RoleSessionName=<span class="fn">f</span><span class="str">"cloudguard-{customer.id}"</span>,
+        ExternalId=customer.external_id,  <span class="cm"># UUID stored in your DB</span>
+        DurationSeconds=<span class="num">3600</span>
+    )
+    creds = response[<span class="str">'Credentials'</span>]
+    <span class="kw">return</span> {
+        <span class="str">'aws_access_key_id'</span>:     creds[<span class="str">'AccessKeyId'</span>],
+        <span class="str">'aws_secret_access_key'</span>: creds[<span class="str">'SecretAccessKey'</span>],
+        <span class="str">'aws_session_token'</span>:     creds[<span class="str">'SessionToken'</span>]
+    }
+
+<span class="kw">def</span> <span class="fn">get_monthly_costs</span>(credentials: dict, months_back: int = <span class="num">3</span>):
+    <span class="str">"""Pull last N months of cost data via Cost Explorer."""</span>
+    ce = boto3.client(<span class="str">'ce'</span>, region_name=<span class="str">'us-east-1'</span>, **credentials)
+    end   = datetime.now().replace(day=<span class="num">1</span>).strftime(<span class="str">'%Y-%m-%d'</span>)
+    start = (datetime.now() - timedelta(days=<span class="num">90</span>)).replace(day=<span class="num">1</span>).strftime(<span class="str">'%Y-%m-%d'</span>)
+
+    response = ce.get_cost_and_usage(
+        TimePeriod={<span class="str">'Start'</span>: start, <span class="str">'End'</span>: end},
+        Granularity=<span class="str">'MONTHLY'</span>,
+        Metrics=[<span class="str">'UnblendedCost'</span>],
+        GroupBy=[{<span class="str">'Type'</span>: <span class="str">'DIMENSION'</span>, <span class="str">'Key'</span>: <span class="str">'SERVICE'</span>}]
+    )
+    <span class="kw">return</span> response[<span class="str">'ResultsByTime'</span>]
+
+<span class="kw">def</span> <span class="fn">find_idle_resources</span>(credentials: dict):
+    <span class="str">"""Find EC2 instances with &lt;5% CPU over last 7 days."""</span>
+    ec2 = boto3.client(<span class="str">'ec2'</span>, **credentials)
+    cw  = boto3.client(<span class="str">'cloudwatch'</span>, **credentials)
+
+    instances = ec2.describe_instances(
+        Filters=[{<span class="str">'Name'</span>: <span class="str">'instance-state-name'</span>, <span class="str">'Values'</span>: [<span class="str">'running'</span>]}]
+    )
+
+    idle = []
+    <span class="kw">for</span> reservation <span class="kw">in</span> instances[<span class="str">'Reservations'</span>]:
+        <span class="kw">for</span> instance <span class="kw">in</span> reservation[<span class="str">'Instances'</span>]:
+            metrics = cw.get_metric_data(
+                MetricDataQueries=[{
+                    <span class="str">'Id'</span>: <span class="str">'cpu'</span>,
+                    <span class="str">'MetricStat'</span>: {
+                        <span class="str">'Metric'</span>: {
+                            <span class="str">'Namespace'</span>: <span class="str">'AWS/EC2'</span>,
+                            <span class="str">'MetricName'</span>: <span class="str">'CPUUtilization'</span>,
+                            <span class="str">'Dimensions'</span>: [{
+                                <span class="str">'Name'</span>: <span class="str">'InstanceId'</span>,
+                                <span class="str">'Value'</span>: instance[<span class="str">'InstanceId'</span>]
+                            }]
+                        },
+                        <span class="str">'Period'</span>: <span class="num">86400</span>,  <span class="cm"># daily average</span>
+                        <span class="str">'Stat'</span>: <span class="str">'Average'</span>
+                    }
+                }],
+                StartTime=datetime.now() - timedelta(days=<span class="num">7</span>),
+                EndTime=datetime.now()
+            )
+            avg_cpu = <span class="fn">sum</span>(metrics[<span class="str">'MetricDataResults'</span>][<span class="num">0</span>][<span class="str">'Values'</span>]) / <span class="num">7</span>
+            <span class="kw">if</span> avg_cpu &lt; <span class="num">5.0</span>:  <span class="cm"># Less than 5% CPU = idle</span>
+                idle.append({
+                    <span class="str">'instance_id'</span>: instance[<span class="str">'InstanceId'</span>],
+                    <span class="str">'type'</span>:        instance[<span class="str">'InstanceType'</span>],
+                    <span class="str">'avg_cpu'</span>:     <span class="fn">round</span>(avg_cpu, <span class="num">2</span>),
+                    <span class="str">'monthly_cost'</span>: <span class="fn">estimate_ec2_cost</span>(instance[<span class="str">'InstanceType'</span>])
+                })
+    <span class="kw">return</span> idle
+
+<span class="kw">def</span> <span class="fn">lambda_handler</span>(event, context):
+    <span class="str">"""EventBridge triggers this daily at 06:00 IST."""</span>
+    db = <span class="fn">get_db</span>()
+    customers = db.query(Customer).<span class="fn">filter</span>(Customer.active == <span class="kw">True</span>).<span class="fn">all</span>()
+
+    <span class="kw">for</span> customer <span class="kw">in</span> customers:
+        <span class="kw">try</span>:
+            creds  = <span class="fn">assume_customer_role</span>(customer)
+            costs  = <span class="fn">get_monthly_costs</span>(creds)
+            idle   = <span class="fn">find_idle_resources</span>(creds)
+            <span class="fn">save_to_db</span>(customer.id, costs, idle)
+            <span class="fn">check_and_send_alerts</span>(customer, costs)
+        <span class="kw">except</span> Exception <span class="kw">as</span> e:
+            <span class="cm"># Don't let one customer failure break others</span>
+            print(<span class="fn">f</span><span class="str">"Error for customer {customer.id}: {e}"</span>)
+            <span class="kw">continue</span>
+
+    <span class="kw">return</span> {<span class="str">'statusCode'</span>: <span class="num">200</span>, <span class="str">'body'</span>: <span class="fn">f</span><span class="str">'Processed {len(customers)} customers'</span>}</pre>
+  </div>
+
+  <h3>Alert engine — threshold checker</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">app/services/alert_engine.py</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="code-lang">python</span>
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+      </div>
+    </div>
+    <pre><span class="kw">import</span> boto3
+<span class="kw">from</span> twilio.rest <span class="kw">import</span> Client <span class="kw">as</span> TwilioClient
+
+ses     = boto3.client(<span class="str">'ses'</span>, region_name=<span class="str">'ap-south-1'</span>)   <span class="cm"># Mumbai</span>
+twilio  = TwilioClient(TWILIO_SID, TWILIO_AUTH)
+
+<span class="kw">def</span> <span class="fn">check_and_send_alerts</span>(customer, costs):
+    current_month_spend = <span class="fn">get_current_month_total</span>(costs)
+    budget              = customer.monthly_budget_inr
+
+    <span class="cm"># Alert at 80% of budget</span>
+    <span class="kw">if</span> current_month_spend >= (budget * <span class="num">0.8</span>):
+        pct = <span class="fn">int</span>((current_month_spend / budget) * <span class="num">100</span>)
+        msg = (
+            <span class="fn">f</span><span class="str">"☁️ CloudGuard Alert\n"</span>
+            <span class="fn">f</span><span class="str">"Account: {customer.company_name}\n"</span>
+            <span class="fn">f</span><span class="str">"Spend: ₹{current_month_spend:,.0f} ({pct}% of budget)\n"</span>
+            <span class="fn">f</span><span class="str">"Projected month-end: ₹{project_month_end(costs):,.0f}\n"</span>
+            <span class="fn">f</span><span class="str">"View dashboard: https://app.cloudguard.in/dashboard"</span>
+        )
+        <span class="cm"># WhatsApp via Twilio</span>
+        <span class="kw">if</span> customer.whatsapp_number:
+            twilio.messages.create(
+                body=msg,
+                from_=<span class="str">'whatsapp:+14155238886'</span>,   <span class="cm"># Twilio sandbox number</span>
+                to=<span class="fn">f</span><span class="str">'whatsapp:{customer.whatsapp_number}'</span>
+            )
+        <span class="cm"># Email via SES</span>
+        ses.send_email(
+            Source=<span class="str">'alerts@cloudguard.in'</span>,
+            Destination={<span class="str">'ToAddresses'</span>: [customer.email]},
+            Message={
+                <span class="str">'Subject'</span>: {<span class="str">'Data'</span>: <span class="fn">f</span><span class="str">'⚠️ {pct}% of your AWS budget used'</span>},
+                <span class="str">'Body'</span>:    {<span class="str">'Text'</span>: {<span class="str">'Data'</span>: msg}}
+            }
+        )</pre>
+  </div>
+
+  <div class="alert alert-blue"><b>EventBridge rule:</b> <code>cron(30 0 * * ? *)</code> — runs at 06:00 IST (00:30 UTC) daily. Attach to your data_collector Lambda. Cost: essentially zero (Lambda free tier covers thousands of daily invocations).</div>
+</div>
+
+<!-- ═══════════ STRIPE PAGE ═══════════ -->
+<div class="page" id="page-stripe">
+  <div class="page-title">Payments — Stripe + Razorpay</div>
+  <div class="page-sub">Stripe for global customers, Razorpay for India (UPI, net banking, Indian cards). Both use webhooks — same pattern.</div>
+
+  <h3>Stripe subscription flow</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">app/services/stripe_service.py</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="code-lang">python</span>
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+      </div>
+    </div>
+    <pre><span class="kw">import</span> stripe
+<span class="kw">from</span> fastapi <span class="kw">import</span> APIRouter, Request, HTTPException
+
+stripe.api_key = STRIPE_SECRET_KEY
+router = APIRouter()
+
+<span class="cm"># ── 1. Create checkout session (called when user clicks "Start Trial") ──</span>
+<span class="kw">async def</span> <span class="fn">create_checkout_session</span>(customer_email: str, plan: str):
+    PRICE_IDS = {
+        <span class="str">"starter"</span>:  <span class="str">"price_xxx"</span>,   <span class="cm"># ₹2,999/mo — create in Stripe dashboard</span>
+        <span class="str">"growth"</span>:   <span class="str">"price_yyy"</span>,   <span class="cm"># ₹5,999/mo</span>
+        <span class="str">"business"</span>: <span class="str">"price_zzz"</span>,   <span class="cm"># ₹12,999/mo</span>
+    }
+    session = stripe.checkout.Session.create(
+        payment_method_types=[<span class="str">'card'</span>],
+        mode=<span class="str">'subscription'</span>,
+        customer_email=customer_email,
+        line_items=[{<span class="str">'price'</span>: PRICE_IDS[plan], <span class="str">'quantity'</span>: <span class="num">1</span>}],
+        subscription_data={
+            <span class="str">'trial_period_days'</span>: <span class="num">30</span>  <span class="cm"># Free trial — card stored, not charged</span>
+        },
+        success_url=<span class="str">'https://app.cloudguard.in/onboarding?session={CHECKOUT_SESSION_ID}'</span>,
+        cancel_url=<span class="str">'https://cloudguard.in/pricing'</span>,
+    )
+    <span class="kw">return</span> session.url  <span class="cm"># Redirect customer to this Stripe-hosted page</span>
+
+<span class="cm"># ── 2. Webhook — Stripe calls THIS when payment events happen ──</span>
+<span class="kw">@</span>router.post(<span class="str">"/webhooks/stripe"</span>)
+<span class="kw">async def</span> <span class="fn">stripe_webhook</span>(request: Request):
+    payload   = <span class="kw">await</span> request.body()
+    sig       = request.headers.get(<span class="str">'stripe-signature'</span>)
+
+    <span class="kw">try</span>:
+        event = stripe.Webhook.construct_event(payload, sig, STRIPE_WEBHOOK_SECRET)
+    <span class="kw">except</span> ValueError:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="num">400</span>)
+
+    <span class="kw">if</span> event[<span class="str">'type'</span>] == <span class="str">'customer.subscription.created'</span>:
+        <span class="fn">activate_customer</span>(event[<span class="str">'data'</span>][<span class="str">'object'</span>])
+
+    <span class="kw">elif</span> event[<span class="str">'type'</span>] == <span class="str">'invoice.payment_succeeded'</span>:
+        <span class="fn">extend_subscription</span>(event[<span class="str">'data'</span>][<span class="str">'object'</span>])
+
+    <span class="kw">elif</span> event[<span class="str">'type'</span>] == <span class="str">'customer.subscription.deleted'</span>:
+        <span class="fn">deactivate_customer</span>(event[<span class="str">'data'</span>][<span class="str">'object'</span>])  <span class="cm"># stop data collection</span>
+
+    <span class="kw">elif</span> event[<span class="str">'type'</span>] == <span class="str">'invoice.payment_failed'</span>:
+        <span class="fn">send_payment_failed_email</span>(event[<span class="str">'data'</span>][<span class="str">'object'</span>])
+
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"ok"</span>}</pre>
+  </div>
+
+  <div class="alert alert-amber"><b>Stripe India note:</b> Stripe in India requires a registered business entity (proprietorship, LLP, or Pvt Ltd) for INR payouts. Start with Razorpay — instant activation with just PAN + bank account. Add Stripe later for international customers.</div>
+
+  <h3>Razorpay (India) — subscription setup</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">app/services/razorpay_service.py</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="code-lang">python</span>
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+      </div>
+    </div>
+    <pre><span class="kw">import</span> razorpay
+<span class="kw">import</span> hmac, hashlib
+
+client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+
+<span class="kw">def</span> <span class="fn">create_subscription</span>(customer_email: str, plan_id: str):
+    <span class="str">"""
+    plan_id = Razorpay Plan ID created in dashboard
+    plan_starter  → ₹2,999/month
+    plan_growth   → ₹5,999/month
+    plan_business → ₹12,999/month
+    """</span>
+    subscription = client.subscription.create({
+        <span class="str">"plan_id"</span>:         plan_id,
+        <span class="str">"total_count"</span>:     <span class="num">120</span>,     <span class="cm"># 10 years — effectively infinite</span>
+        <span class="str">"quantity"</span>:        <span class="num">1</span>,
+        <span class="str">"customer_notify"</span>: <span class="num">1</span>,
+        <span class="str">"notes"</span>: {<span class="str">"email"</span>: customer_email}
+    })
+    <span class="kw">return</span> subscription[<span class="str">"short_url"</span>]  <span class="cm"># Payment link, send to customer</span>
+
+<span class="kw">def</span> <span class="fn">verify_webhook</span>(body: bytes, signature: str):
+    <span class="str">"""Always verify Razorpay webhook signatures."""</span>
+    expected = hmac.new(
+        RAZORPAY_WEBHOOK_SECRET.encode(),
+        body, hashlib.sha256
+    ).hexdigest()
+    <span class="kw">return</span> hmac.compare_digest(expected, signature)</pre>
+  </div>
+
+  <h3>Payment events you must handle</h3>
+  <table>
+    <tr><th>Event</th><th>Stripe</th><th>Razorpay</th><th>Your action</th></tr>
+    <tr><td>Trial started</td><td>customer.subscription.trial_will_end</td><td>subscription.activated</td><td>Send onboarding email, activate data pull</td></tr>
+    <tr><td>Payment success</td><td>invoice.payment_succeeded</td><td>subscription.charged</td><td>Extend active_until by 30 days in DB</td></tr>
+    <tr><td>Payment failed</td><td>invoice.payment_failed</td><td>subscription.halted</td><td>Email customer, grace period 3 days</td></tr>
+    <tr><td>Cancelled</td><td>customer.subscription.deleted</td><td>subscription.cancelled</td><td>Set customer.active=False, stop Lambda</td></tr>
+    <tr><td>Upgraded</td><td>customer.subscription.updated</td><td>subscription.updated</td><td>Update plan in DB, unlock features</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════ CI/CD PAGE ═══════════ -->
+<div class="page" id="page-cicd">
+  <div class="page-title">CI/CD pipeline</div>
+  <div class="page-sub">GitHub Actions → ECR → ECS Fargate. Same pattern you use at work. Two environments: staging auto-deploys, prod requires manual approval.</div>
+
+  <h3>GitHub Actions — prod deploy</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">.github/workflows/deploy-prod.yml</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="code-lang">yaml</span>
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+      </div>
+    </div>
+    <pre><span class="key">name:</span> <span class="str">Deploy to Production</span>
+
+<span class="key">on:</span>
+  <span class="key">push:</span>
+    <span class="key">branches:</span> [<span class="str">main</span>]
+
+<span class="key">jobs:</span>
+  <span class="key">test:</span>
+    <span class="key">runs-on:</span> <span class="str">ubuntu-latest</span>
+    <span class="key">steps:</span>
+      - <span class="key">uses:</span> <span class="str">actions/checkout@v4</span>
+      - <span class="key">name:</span> <span class="str">Run tests</span>
+        <span class="key">run:</span> |
+          pip install -r backend/requirements.txt
+          pytest backend/tests/ -v
+          <span class="cm"># Tests must pass before ANY deploy</span>
+
+  <span class="key">build-and-push:</span>
+    <span class="key">needs:</span> <span class="str">test</span>
+    <span class="key">runs-on:</span> <span class="str">ubuntu-latest</span>
+    <span class="key">steps:</span>
+      - <span class="key">uses:</span> <span class="str">actions/checkout@v4</span>
+
+      - <span class="key">name:</span> <span class="str">Configure AWS credentials</span>
+        <span class="key">uses:</span> <span class="str">aws-actions/configure-aws-credentials@v4</span>
+        <span class="key">with:</span>
+          <span class="key">aws-access-key-id:</span>     <span class="str">${{ secrets.AWS_ACCESS_KEY_ID }}</span>
+          <span class="key">aws-secret-access-key:</span> <span class="str">${{ secrets.AWS_SECRET_ACCESS_KEY }}</span>
+          <span class="key">aws-region:</span>            <span class="str">ap-south-1</span>  <span class="cm"># Mumbai</span>
+
+      - <span class="key">name:</span> <span class="str">Login to ECR</span>
+        <span class="key">uses:</span> <span class="str">aws-actions/amazon-ecr-login@v2</span>
+
+      - <span class="key">name:</span> <span class="str">Build and push Docker image</span>
+        <span class="key">env:</span>
+          <span class="key">ECR_REGISTRY:</span>   <span class="str">${{ steps.login-ecr.outputs.registry }}</span>
+          <span class="key">IMAGE_TAG:</span>      <span class="str">${{ github.sha }}</span>
+        <span class="key">run:</span> |
+          docker build -t $ECR_REGISTRY/cloudguard-backend:$IMAGE_TAG ./backend
+          docker push $ECR_REGISTRY/cloudguard-backend:$IMAGE_TAG
+          echo "IMAGE=$ECR_REGISTRY/cloudguard-backend:$IMAGE_TAG" >> $GITHUB_ENV
+
+  <span class="key">deploy:</span>
+    <span class="key">needs:</span> <span class="str">build-and-push</span>
+    <span class="key">runs-on:</span> <span class="str">ubuntu-latest</span>
+    <span class="key">environment:</span> <span class="str">production</span>   <span class="cm"># Requires manual approval in GitHub</span>
+    <span class="key">steps:</span>
+      - <span class="key">name:</span> <span class="str">Deploy to ECS</span>
+        <span class="key">run:</span> |
+          aws ecs update-service \
+            --cluster cloudguard-prod \
+            --service cloudguard-backend \
+            --force-new-deployment \
+            --region ap-south-1
+
+      - <span class="key">name:</span> <span class="str">Deploy frontend to S3 + invalidate CloudFront</span>
+        <span class="key">run:</span> |
+          cd frontend && npm ci && npm run build
+          aws s3 sync dist/ s3://cloudguard-app-prod --delete
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CF_DIST_ID }} \
+            --paths "/*"
+
+      - <span class="key">name:</span> <span class="str">Update Lambda</span>
+        <span class="key">run:</span> |
+          cd backend/lambdas/data_collector
+          zip -r function.zip .
+          aws lambda update-function-code \
+            --function-name cloudguard-data-collector \
+            --zip-file fileb://function.zip</pre>
+  </div>
+
+  <h3>Terraform — core infrastructure</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-filename">infrastructure/terraform/main.tf</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="code-lang">hcl</span>
+        <button class="code-copy" onclick="copyCode(this)">Copy</button>
+      </div>
+    </div>
+    <pre><span class="cm"># ECS Fargate — backend API</span>
+<span class="kw">resource</span> <span class="str">"aws_ecs_service"</span> <span class="str">"backend"</span> {
+  name            = <span class="str">"cloudguard-backend"</span>
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.backend.arn
+  desired_count   = <span class="num">1</span>  <span class="cm"># Scale up later — start lean</span>
+  launch_type     = <span class="str">"FARGATE"</span>
+
+  network_configuration {
+    subnets          = aws_subnet.private[*].id
+    security_groups  = [aws_security_group.ecs.id]
+    assign_public_ip = <span class="kw">false</span>
+  }
+}
+
+<span class="cm"># RDS PostgreSQL — t3.micro is enough for 100 customers</span>
+<span class="kw">resource</span> <span class="str">"aws_db_instance"</span> <span class="str">"postgres"</span> {
+  identifier        = <span class="str">"cloudguard-db"</span>
+  engine            = <span class="str">"postgres"</span>
+  engine_version    = <span class="str">"15"</span>
+  instance_class    = <span class="str">"db.t3.micro"</span>
+  allocated_storage = <span class="num">20</span>
+  storage_type      = <span class="str">"gp3"</span>
+  multi_az          = <span class="kw">false</span>  <span class="cm"># Enable when you hit 50+ customers</span>
+
+  db_name  = <span class="str">"cloudguard"</span>
+  username = <span class="str">"cgadmin"</span>
+  password = <span class="kw">var</span>.db_password  <span class="cm"># From Secrets Manager</span>
+
+  backup_retention_period = <span class="num">7</span>
+  skip_final_snapshot     = <span class="kw">false</span>
+}
+
+<span class="cm"># EventBridge — daily Lambda trigger at 06:00 IST</span>
+<span class="kw">resource</span> <span class="str">"aws_cloudwatch_event_rule"</span> <span class="str">"daily_collection"</span> {
+  name                = <span class="str">"cloudguard-daily-collect"</span>
+  schedule_expression = <span class="str">"cron(30 0 * * ? *)"</span>  <span class="cm"># 00:30 UTC = 06:00 IST</span>
+}
+
+<span class="cm"># Cognito — auth, no code needed</span>
+<span class="kw">resource</span> <span class="str">"aws_cognito_user_pool"</span> <span class="str">"users"</span> {
+  name = <span class="str">"cloudguard-users"</span>
+  password_policy {
+    minimum_length    = <span class="num">8</span>
+    require_uppercase = <span class="kw">true</span>
+    require_numbers   = <span class="kw">true</span>
+  }
+  auto_verified_attributes = [<span class="str">"email"</span>]
+  mfa_configuration        = <span class="str">"OFF"</span>  <span class="cm"># Enable TOTP later</span>
+}</pre>
+  </div>
+
+  <div class="alert alert-green"><b>Secrets management:</b> All secrets (DB password, Stripe key, Twilio SID, Razorpay key) go into AWS Secrets Manager. Lambda and ECS fetch them at runtime via <code>boto3.client('secretsmanager')</code>. Never hardcode. Never in environment variables in plain text.</div>
+
+  <h3>Environments strategy</h3>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="badge badge-amber">staging</span> — auto-deploy on PR merge to develop</div>
+      <div class="card-body" style="font-family:var(--mono);font-size:11px;line-height:1.9;color:var(--text2)">
+        ECS: t3.micro (1 task)<br>
+        RDS: t3.micro (shared)<br>
+        Stripe: test mode keys<br>
+        Razorpay: test mode<br>
+        Alerts: your own email only<br>
+        Domain: staging.cloudguard.in
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="badge badge-green">production</span> — manual approval gate</div>
+      <div class="card-body" style="font-family:var(--mono);font-size:11px;line-height:1.9;color:var(--text2)">
+        ECS: t3.small (1 task → scale)<br>
+        RDS: t3.micro → t3.small at 50 cust<br>
+        Stripe: live keys<br>
+        Razorpay: live keys<br>
+        Alerts: all customers<br>
+        Domain: app.cloudguard.in
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ COST PAGE ═══════════ -->
+<div class="page" id="page-cost">
+  <div class="page-title">Infrastructure cost — your AWS bill</div>
+  <div class="page-sub">Running this SaaS costs ₹8,000–₹12,000/month on AWS. You break even at 3 customers on the Starter plan.</div>
+
+  <h3>Monthly AWS cost breakdown (ap-south-1 Mumbai)</h3>
+  <table>
+    <tr><th>Service</th><th>Spec</th><th>Monthly cost (USD)</th><th>Monthly cost (INR)</th></tr>
+    <tr><td>ECS Fargate</td><td>0.25 vCPU, 0.5GB — 1 task</td><td>~$12</td><td>~₹1,000</td></tr>
+    <tr><td>RDS PostgreSQL</td><td>db.t3.micro, 20GB gp3</td><td>~$15</td><td>~₹1,250</td></tr>
+    <tr><td>ElastiCache</td><td>cache.t3.micro Redis</td><td>~$12</td><td>~₹1,000</td></tr>
+    <tr><td>ALB</td><td>Application Load Balancer</td><td>~$18</td><td>~₹1,500</td></tr>
+    <tr><td>CloudFront + S3</td><td>Frontend hosting + CDN</td><td>~$3</td><td>~₹250</td></tr>
+    <tr><td>Lambda</td><td>Daily collector (tiny)</td><td>&lt;$1</td><td>~₹50</td></tr>
+    <tr><td>SES</td><td>Email alerts (1000/mo)</td><td>~$0.10</td><td>~₹8</td></tr>
+    <tr><td>Secrets Manager</td><td>5–10 secrets</td><td>~$2</td><td>~₹165</td></tr>
+    <tr><td>Cognito</td><td>Free up to 50,000 MAU</td><td>$0</td><td>₹0</td></tr>
+    <tr><td>Data transfer</td><td>Intra-region, minimal</td><td>~$2</td><td>~₹165</td></tr>
+    <tr><td style="color:var(--text);font-weight:500">TOTAL</td><td></td><td style="color:var(--green);font-weight:500">~$65</td><td style="color:var(--green);font-weight:500">~₹5,400/mo</td></tr>
+  </table>
+
+  <div class="grid-2" style="margin-top:20px">
+    <div class="card">
+      <div class="card-title"><span class="badge badge-green">Break-even analysis</span></div>
+      <div class="card-body" style="font-family:var(--mono);font-size:11px;line-height:2">
+        <div style="color:var(--text2)">AWS infra cost: <span style="color:var(--amber)">₹5,400/mo</span></div>
+        <div style="color:var(--text2)">Twilio WhatsApp: <span style="color:var(--amber)">₹800/mo</span></div>
+        <div style="color:var(--text2)">Domain + misc:  <span style="color:var(--amber)">₹500/mo</span></div>
+        <div style="border-top:1px solid var(--border);margin:8px 0;padding-top:8px;color:var(--text)">Total costs: <span style="color:var(--red)">₹6,700/mo</span></div>
+        <div style="color:var(--text2)">Starter plan: ₹2,999</div>
+        <div style="color:var(--text)">Break-even: <span style="color:var(--green)">3 customers</span> ✓</div>
+        <div style="color:var(--text)">At 10 customers: <span style="color:var(--green)">₹23,290 profit/mo</span></div>
+        <div style="color:var(--text)">At 30 customers: <span style="color:var(--green)">~₹1.5L profit/mo</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="badge badge-blue">Scaling triggers</span></div>
+      <div class="card-body" style="font-family:var(--mono);font-size:11px;line-height:2;color:var(--text2)">
+        <div><span style="color:var(--text)">0–20 customers:</span> current stack</div>
+        <div><span style="color:var(--text)">20–50 customers:</span> RDS → t3.small</div>
+        <div><span style="color:var(--text)">50–100 customers:</span> ECS → 2 tasks</div>
+        <div><span style="color:var(--text)">100+ customers:</span> RDS Multi-AZ</div>
+        <div><span style="color:var(--text)">200+ customers:</span> Read replica</div>
+        <div style="margin-top:8px;color:var(--text3)">Lambda auto-scales to<br>1000 concurrent — free</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-green"><b>AWS credits:</b> Apply for AWS Activate (startup program) — you get $5,000–$25,000 in free credits. Your infra runs free for 1–4 years. Apply at <b>aws.amazon.com/activate</b> — takes 3 days to approve.</div>
+
+  <h3>Third-party costs</h3>
+  <table>
+    <tr><th>Tool</th><th>Purpose</th><th>Free tier</th><th>Paid</th></tr>
+    <tr><td>Twilio</td><td>WhatsApp alerts</td><td>$15 trial credit</td><td>~$0.005/message</td></tr>
+    <tr><td>Stripe</td><td>Payments (global)</td><td>Free</td><td>2.9% + $0.30/txn</td></tr>
+    <tr><td>Razorpay</td><td>Payments (India)</td><td>Free</td><td>2% per txn</td></tr>
+    <tr><td>GitHub</td><td>Code + CI/CD</td><td>Free (public)</td><td>$4/mo (private)</td></tr>
+    <tr><td>Sentry</td><td>Error tracking</td><td>5,000 errors/mo</td><td>$26/mo</td></tr>
+    <tr><td>Mailchimp</td><td>Marketing emails</td><td>500 contacts</td><td>$13/mo</td></tr>
+  </table>
+</div>
+
+</div><!-- end main -->
+</div><!-- end layout -->
+
+<script>
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+  }
+}
+function setSidebar(el) {
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+</script>
+</body>
+</html>

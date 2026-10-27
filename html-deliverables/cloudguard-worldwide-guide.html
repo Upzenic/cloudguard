@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CloudGuard — Worldwide Selling Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f1117;--ink2:#3d4452;--ink3:#7b8494;--ink4:#b5bbc8;
+  --bg:#f0f2f5;--white:#fff;--border:#e0e4ec;--border2:#c8cdd9;
+  --blue:#1a56ff;--blue2:#0040e6;--bluebg:#e8eeff;--bluetxt:#1a3acc;
+  --green:#0d9065;--greenbg:#dcf5ec;--greentxt:#096b4b;
+  --red:#c93025;--redbg:#fde8e7;--redtxt:#a02219;
+  --amber:#9a5a00;--amberbg:#fef3d8;--ambertxt:#7a4500;
+  --purple:#5b21b6;--purplebg:#ede9fe;--purpletxt:#4c1d95;
+  --font:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ── HEADER ── */
+.hero{background:linear-gradient(135deg,#0a0f1e 0%,#0f2050 60%,#1a1040 100%);color:#fff;padding:36px 32px;margin-bottom:0}
+.hero-label{font-size:11px;font-weight:500;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.hero h1{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:8px}
+.hero p{font-size:14px;color:rgba(255,255,255,.55);max-width:560px;line-height:1.6}
+.hero-stats{display:flex;gap:28px;margin-top:22px;flex-wrap:wrap}
+.hstat{text-align:center}
+.hstat-num{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.5px}
+.hstat-lbl{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px}
+
+/* ── NAV TABS ── */
+.tabs{background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;display:flex;gap:2px;overflow-x:auto;position:sticky;top:0;z-index:20}
+.tab{padding:13px 16px;font-size:12.5px;font-weight:500;color:var(--ink3);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .15s;border-top:none;border-left:none;border-right:none;background:none;font-family:var(--font)}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* ── PAGES ── */
+.pg{display:none;padding:22px 24px;max-width:960px;margin:0 auto}
+.pg.on{display:block}
+
+/* ── UTILS ── */
+.sec-title{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-line{flex:1;height:1px;background:var(--border)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:14px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:10px;margin-bottom:14px}
+.ch{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ct{font-size:13px;font-weight:600;color:var(--ink)}
+.cs{font-size:11px;color:var(--ink3)}
+.cb{padding:16px 18px}
+.tag{display:inline-flex;align-items:center;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.tg{background:var(--greenbg);color:var(--greentxt)}
+.tb{background:var(--bluebg);color:var(--bluetxt)}
+.ta{background:var(--amberbg);color:var(--ambertxt)}
+.tr{background:var(--redbg);color:var(--redtxt)}
+.tp{background:var(--purplebg);color:var(--purpletxt)}
+.tgr{background:#eef0f4;color:var(--ink2)}
+.btn{display:inline-flex;align-items:center;gap:5px;font-family:var(--font);font-size:12px;font-weight:500;padding:7px 14px;border-radius:7px;cursor:pointer;border:none;transition:all .12s}
+.bp{background:var(--blue);color:#fff}.bp:hover{background:var(--blue2)}
+.bg2{background:transparent;color:var(--ink2);border:1px solid var(--border)}.bg2:hover{border-color:var(--border2)}
+.mono{font-family:var(--mono);font-size:11px}
+
+/* ── CHANNEL CARDS ── */
+.ccard{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:18px;position:relative;transition:border-color .15s;cursor:default}
+.ccard:hover{border-color:var(--border2)}
+.ccard.featured{border:2px solid var(--blue)}
+.cc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.cc-name{font-size:14px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:7px}
+.cc-icon{font-size:20px}
+.cc-sub{font-size:12px;color:var(--ink3);line-height:1.55;margin-bottom:12px}
+.cc-metas{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.earn-bar{height:5px;background:#eef0f4;border-radius:3px;overflow:hidden;margin-top:8px}
+.earn-fill{height:100%;border-radius:3px;transition:width .9s ease}
+.earn-row{display:flex;align-items:center;gap:8px}
+.earn-lbl{font-size:11px;color:var(--ink3);min-width:52px}
+
+/* ── COUNTRY TABLE ── */
+.ctry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:16px}
+.ctry-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:14px}
+.ctry-flag{font-size:22px;margin-bottom:8px}
+.ctry-name{font-size:13px;font-weight:600;margin-bottom:3px}
+.ctry-market{font-size:11px;color:var(--ink3);margin-bottom:8px}
+.ctry-tags{display:flex;gap:5px;flex-wrap:wrap}
+
+/* ── SCRIPT BOXES ── */
+.script{background:#fafbfc;border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:14px 16px;font-size:12.5px;line-height:1.8;color:var(--ink2);margin:12px 0;position:relative}
+.script strong{color:var(--ink);font-weight:500}
+.script-label{font-size:10px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.copy-pill{position:absolute;top:10px;right:10px;background:var(--bluebg);color:var(--bluetxt);font-size:10px;padding:3px 9px;border-radius:10px;cursor:pointer;border:none;font-family:var(--font)}
+.copy-pill:hover{background:var(--blue);color:#fff}
+
+/* ── EMAIL TEMPLATE ── */
+.email-wrap{background:#fafbfc;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0}
+.email-head{background:var(--white);border-bottom:1px solid var(--border);padding:12px 16px}
+.email-field{display:flex;gap:8px;margin-bottom:4px;font-size:12px}
+.ef-label{color:var(--ink3);min-width:46px}
+.ef-val{color:var(--ink)}
+.email-body{padding:16px;font-size:12.5px;line-height:1.85;color:var(--ink2)}
+.email-body strong{color:var(--ink);font-weight:500}
+
+/* ── PAYMENT TABLE ── */
+.pay-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:16px}
+.pay-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px}
+.pay-card.best{border:2px solid var(--green)}
+.pay-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.pay-name{font-size:13px;font-weight:600}
+.pay-fee{font-size:12px;font-weight:600;color:var(--blue)}
+.pay-sub{font-size:12px;color:var(--ink3);line-height:1.55;margin-bottom:10px}
+.pay-pros{list-style:none;display:flex;flex-direction:column;gap:4px}
+.pay-pros li{font-size:11px;color:var(--ink2);display:flex;align-items:flex-start;gap:5px}
+.pay-pros li::before{content:'✓';color:var(--green);font-weight:600;flex-shrink:0}
+
+/* ── SEO TABLE ── */
+.seo-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.seo-row:last-child{border-bottom:none}
+.seo-num{width:22px;height:22px;border-radius:50%;background:var(--bluebg);color:var(--bluetxt);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.seo-kw{font-size:12.5px;font-family:var(--mono);font-weight:500;color:var(--ink);margin-bottom:3px}
+.seo-intent{font-size:11px;color:var(--ink3);line-height:1.5}
+
+/* ── TIMELINE ── */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-row{display:flex;gap:16px;padding-bottom:24px;position:relative}
+.tl-row:not(:last-child)::before{content:'';position:absolute;left:10px;top:24px;bottom:0;width:2px;background:var(--border);border-radius:1px}
+.tl-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px}
+.tl-body{flex:1}
+.tl-month{font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:3px}
+.tl-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.tl-desc{font-size:12px;color:var(--ink3);line-height:1.6}
+.tl-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+
+/* ── TACTIC CARD ── */
+.tactic{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px}
+.tactic-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.tactic-title{font-size:13px;font-weight:600;color:var(--ink)}
+.tactic-body{font-size:12px;color:var(--ink3);line-height:1.65;margin-bottom:10px}
+.tactic-steps{display:flex;flex-direction:column;gap:5px}
+.tactic-step{display:flex;gap:8px;font-size:12px;color:var(--ink2)}
+.tactic-step-num{width:18px;height:18px;border-radius:50%;background:var(--bluebg);color:var(--bluetxt);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;right:20px;background:#1a1f2e;color:#fff;font-size:12px;padding:10px 16px;border-radius:8px;opacity:0;transform:translateY(60px);transition:all .25s;z-index:999}
+.toast.show{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">CloudGuard · Worldwide Growth Playbook</div>
+  <h1>How to sell CloudGuard to the entire world</h1>
+  <p>A complete playbook covering every channel, every country, payment setup, cold email scripts, SEO strategy, and a month-by-month timeline — built specifically for your DevOps background and India base.</p>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-num">$50B+</div><div class="hstat-lbl">Global cloud monitoring market</div></div>
+    <div class="hstat"><div class="hstat-num">160+</div><div class="hstat-lbl">Countries you can sell to</div></div>
+    <div class="hstat"><div class="hstat-num">₹0</div><div class="hstat-lbl">Cost to start selling globally</div></div>
+    <div class="hstat"><div class="hstat-num">3 wks</div><div class="hstat-lbl">To first international customer</div></div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab on" onclick="goTab('channels',this)">📡 Channels</button>
+  <button class="tab" onclick="goTab('countries',this)">🌍 Best Countries</button>
+  <button class="tab" onclick="goTab('email',this)">📧 Cold Email Scripts</button>
+  <button class="tab" onclick="goTab('payment',this)">💳 Accept Global Payments</button>
+  <button class="tab" onclick="goTab('seo',this)">🔍 SEO Strategy</button>
+  <button class="tab" onclick="goTab('social',this)">📣 Social Media</button>
+  <button class="tab" onclick="goTab('timeline',this)">📅 Month-by-Month Plan</button>
+</div>
+
+<!-- ═══ CHANNELS ═══ -->
+<div id="pg-channels" class="pg on">
+  <br>
+  <div class="sec-title">Free channels — start today <div class="sec-line"></div></div>
+  <div class="g3">
+    <div class="ccard featured">
+      <div class="cc-top"><div class="cc-name"><span class="cc-icon">💼</span>LinkedIn</div><span class="tag tb">Do today</span></div>
+      <div class="cc-sub">Post weekly about AWS cost savings. Your 5 years of DevOps experience is your unfair advantage. CTOs trust engineers, not salespeople.</div>
+      <div class="cc-metas"><span class="tag tg">Free</span><span class="tag tgr">B2B gold</span><span class="tag tgr">Warm leads</span></div>
+      <div class="earn-row"><span class="earn-lbl">Revenue</span><div class="earn-bar"><div class="earn-fill" style="width:92%;background:#0d9065"></div></div></div>
+    </div>
+    <div class="ccard">
+      <div class="cc-top"><div class="cc-name"><span class="cc-icon">🐦</span>Twitter / X</div><span class="tag tb">This week</span></div>
+      <div class="cc-sub">DevOps Twitter is huge. Tweet tips like "5 ways to stop AWS bill shocks." Build an audience of 500 technical followers and 10 will become customers.</div>
+      <div class="cc-metas"><span class="tag tg">Free</span><span class="tag tgr">DevOps community</span></div>
+      <div class="earn-row"><span class="earn-lbl">Revenue</span><div class="earn-bar"><div class="earn-fill" style="width:75%;background:#0d9065"></div></div></div>
+    </div>
+    <div class="ccard">
+      <div class="cc-top"><div class="cc-name"><span class="cc-icon">🧑‍💻</span>Dev.to / Hashnode</div><span class="tag tb">This week</span></div>
+      <div class="cc-sub">Write technical blogs like "How I found ₹40,000/month in waste in a startup's AWS account." Developers read these. They forward to their CTOs.</div>
+      <div class="cc-metas"><span class="tag tg">Free</span><span class="tag tgr">SEO traffic</span></div>
+      <div class="earn-row"><span class="earn-lbl">Revenue</span><div class="earn-bar"><div class="earn-fill" style="width:70%;background:#0d9065"></div></div></div>
+    </div>
+  </div>
+
+  <div class="sec-title">Community channels — high trust <div class="sec-line"></div></div>
+  <div class="g3">
+    <div class="ccard">
+      <div class="cc-top"><div class="cc-name"><span class="cc-icon">🚀</span>Product Hunt</div><span class="tag ta">Month 3</span></div>
+      <div class="cc-sub">Launch once you have 5 real customers and 3 testimonials. A top-10 finish = 500–2,000 visitors in 24 hours. 2–5% convert to trial.</div>
+      <div class="cc-metas"><span class="tag tg">Free</span><span class="tag tgr">Global visibility</span><span class="tag tgr">Viral</span></div>
+      <div class="earn-row"><span class="earn-lbl">Revenue</span><div class="earn-bar"><div class="earn-fill" style="width:80%;background:#0d9065"></div></div></div>
+    </div>
+    <div class="ccard">
+      <div class="cc-top"><div class="cc-name"><span class="cc-icon">💡</span>IndieHackers</div><span class="tag tb">This week</span></div>
+      <div class="cc-sub">Post your build story. 100,000+ founders read this daily. Post monthly updates with real revenue numbers — the community loves transparency.</div>
+      <div class="cc-metas"><span class="tag tg">Free</span><span class="tag tgr">Global founders</span></div>
+      <div class="earn-row"><span class="earn-lbl">Revenue</span><div class="earn-bar"><div class="earn-fill" style="width:68%;background:#0d9065"></div></div></div>
+    </div>
+    <div class="ccard">
+      <div class="cc-top"><div class="cc-name"><span class="cc-icon">🤖</span>Reddit DevOps</div><span class="tag tb">This week</span></div>
+      <div class="cc-sub">r/devops has 600K members. r/aws has 400K. Don't spam — share genuinely helpful posts. Add your link in bio. 1 viral post = 50 signups.</div>
+      <div class="cc-metas"><span class="tag tg">Free</span><span class="tag tgr">Technical buyers</span></div>
+      <div class="earn-row"><span class="earn-lbl">Revenue</span><div class="earn-bar"><div class="earn-fill" style="width:65%;background:#0d9065"></div></div></div>
+    </div>
+  </div>
+
+  <div class="sec-title">Paid / partnership channels — scale after ₹1L MRR <div class="sec-line"></div></div>
+  <div class="g3">
+    <div class="ccard featured">
+      <div class="cc-top"><div class="cc-name"><span class="cc-icon">☁️</span>AWS Marketplace</div><span class="tag tp">Month 6+</span></div>
+      <div class="cc-sub">Your most powerful channel. Customers buy you through their AWS bill. AWS sales team co-sells with you. 300,000+ active AWS customers browse it monthly.</div>
+      <div class="cc-metas"><span class="tag ta">3% fee</span><span class="tag tgr">Massive reach</span><span class="tag tgr">Co-sell support</span></div>
+      <div class="earn-row"><span class="earn-lbl">Revenue</span><div class="earn-bar"><div class="earn-fill" style="width:95%;background:#1a56ff"></div></div></div>
+    </div>
+    <div class="ccard">
+      <div class="cc-top"><div class="cc-name"><span class="cc-icon">🍋</span>AppSumo</div><span class="tag tp">Month 8+</span></div>
+      <div class="cc-sub">1.5M buyers. One campaign = $20K–$500K cash. Give 30–40% to AppSumo. Use for user base growth, not MRR. Lifetime deal = one-time payment.</div>
+      <div class="cc-metas"><span class="tag tr">30–40% fee</span><span class="tag tgr">Fast cash</span><span class="tag tgr">Mass users</span></div>
+      <div class="earn-row"><span class="earn-lbl">Revenue</span><div class="earn-bar"><div class="earn-fill" style="width:82%;background:#f59e0b"></div></div></div>
+    </div>
+    <div class="ccard">
+      <div class="cc-top"><div class="cc-name"><span class="cc-icon">⭐</span>G2 + Capterra</div><span class="tag tb">Month 2+</span></div>
+      <div class="cc-sub">Free listings. Buyers searching "AWS cost monitoring" find you organically forever. 5 reviews = featured listing. Drives 20–50 qualified leads/month.</div>
+      <div class="cc-metas"><span class="tag tg">Free listing</span><span class="tag tgr">Intent traffic</span><span class="tag tgr">SEO</span></div>
+      <div class="earn-row"><span class="earn-lbl">Revenue</span><div class="earn-bar"><div class="earn-fill" style="width:72%;background:#0d9065"></div></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ct">Cold outreach — your #1 weapon right now</div><div class="cs">Zero cost · Direct to decision makers</div></div>
+    <div class="cb">
+      <div class="g2" style="margin-bottom:0">
+        <div>
+          <div style="font-size:12.5px;font-weight:600;margin-bottom:8px">Who to target globally</div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--ink2)">
+            <div>🎯 <strong>CTO / VP Engineering</strong> at Series A–C funded startups</div>
+            <div>🎯 <strong>DevOps Lead / Cloud Architect</strong> at 20–200 person companies</div>
+            <div>🎯 <strong>Founders</strong> at bootstrapped SaaS companies on AWS</div>
+            <div>🎯 <strong>CFO / Finance lead</strong> at cloud-heavy startups</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12.5px;font-weight:600;margin-bottom:8px">How to find them (free tools)</div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--ink2)">
+            <div>🔍 <strong>LinkedIn Sales Navigator</strong> — filter by title + company size</div>
+            <div>🔍 <strong>Apollo.io free tier</strong> — 50 leads/month free</div>
+            <div>🔍 <strong>Crunchbase</strong> — filter Series A-C SaaS companies</div>
+            <div>🔍 <strong>GitHub</strong> — find teams using AWS CDK / Terraform</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COUNTRIES ═══ -->
+<div id="pg-countries" class="pg">
+  <br>
+  <div class="sec-title">Tier 1 — Start here, highest chance of closing <div class="sec-line"></div></div>
+  <div class="ctry-grid">
+    <div class="ctry-card" style="border-color:#22c55e">
+      <div class="ctry-flag">🇮🇳</div>
+      <div class="ctry-name">India</div>
+      <div class="ctry-market">₹2,999–₹12,999/mo · Your home turf</div>
+      <div class="ctry-tags"><span class="tag tg">Start here</span><span class="tag tgr">Razorpay</span></div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:8px">8,100+ SaaS companies. All on AWS. All overpaying. You speak their language. LinkedIn + WhatsApp outreach works perfectly.</div>
+    </div>
+    <div class="ctry-card" style="border-color:#3b82f6">
+      <div class="ctry-flag">🇸🇬</div>
+      <div class="ctry-name">Singapore</div>
+      <div class="ctry-market">$49–$299/mo USD · Southeast Asia HQ</div>
+      <div class="ctry-tags"><span class="tag tb">High value</span><span class="tag tgr">Stripe</span></div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:8px">Most SE Asian startups are headquartered here. English-speaking, tech-savvy, high AWS spend. Easy to cold email.</div>
+    </div>
+    <div class="ctry-card" style="border-color:#3b82f6">
+      <div class="ctry-flag">🇺🇸</div>
+      <div class="ctry-name">United States</div>
+      <div class="ctry-market">$99–$499/mo USD · Biggest market</div>
+      <div class="ctry-tags"><span class="tag tb">Highest ARPU</span><span class="tag tgr">Stripe</span></div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:8px">Most AWS spend globally. Target Series A–B startups in NYC, SF, Austin. Cold email + Product Hunt + AWS Marketplace.</div>
+    </div>
+    <div class="ctry-card">
+      <div class="ctry-flag">🇬🇧</div>
+      <div class="ctry-name">United Kingdom</div>
+      <div class="ctry-market">£49–£299/mo · Strong SaaS market</div>
+      <div class="ctry-tags"><span class="tag tgr">Stripe</span><span class="tag tgr">GDPR aware</span></div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:8px">London has 2,000+ funded tech startups. All English-speaking. G2 + cold email + LinkedIn. GDPR compliance = trust.</div>
+    </div>
+    <div class="ctry-card">
+      <div class="ctry-flag">🇦🇺</div>
+      <div class="ctry-name">Australia</div>
+      <div class="ctry-market">A$69–A$399/mo · High AWS adoption</div>
+      <div class="ctry-tags"><span class="tag tgr">Stripe</span><span class="tag tgr">Easy outreach</span></div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:8px">Sydney and Melbourne are booming with AWS-heavy startups. Very friendly to Indian founders. Time zone overlap with IST.</div>
+    </div>
+    <div class="ctry-card">
+      <div class="ctry-flag">🇨🇦</div>
+      <div class="ctry-name">Canada</div>
+      <div class="ctry-market">C$69–C$399/mo · Growing fast</div>
+      <div class="ctry-tags"><span class="tag tgr">Stripe</span><span class="tag tgr">Large diaspora</span></div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:8px">Toronto and Vancouver tech scenes. Large Indian diaspora = warm reception. Similar buying behaviour to the US.</div>
+    </div>
+  </div>
+
+  <div class="sec-title">Tier 2 — Add after 20+ customers <div class="sec-line"></div></div>
+  <div class="ctry-grid">
+    <div class="ctry-card">
+      <div class="ctry-flag">🇩🇪</div>
+      <div class="ctry-name">Germany</div>
+      <div class="ctry-market">€49–€299/mo · Engineer-led buying</div>
+      <div class="ctry-tags"><span class="tag tgr">Paddle</span><span class="tag tgr">GDPR key</span></div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:8px">Germans love technical tools. DevOps culture is strong. Must mention data residency and GDPR compliance in your pitch.</div>
+    </div>
+    <div class="ctry-card">
+      <div class="ctry-flag">🇳🇱</div>
+      <div class="ctry-name">Netherlands</div>
+      <div class="ctry-market">€49–€299/mo · English-first market</div>
+      <div class="ctry-tags"><span class="tag tgr">Paddle</span><span class="tag tgr">English OK</span></div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:8px">Amsterdam is Europe's startup capital after London. Everyone speaks English. High cloud adoption per capita.</div>
+    </div>
+    <div class="ctry-card">
+      <div class="ctry-flag">🇮🇱</div>
+      <div class="ctry-name">Israel</div>
+      <div class="ctry-market">$99–$499/mo · Tech per capita #1</div>
+      <div class="ctry-tags"><span class="tag tp">High spend</span><span class="tag tgr">Stripe</span></div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:8px">More startups per capita than anywhere. All English-speaking tech companies. Very high AWS bills. Cold email works very well.</div>
+    </div>
+    <div class="ctry-card">
+      <div class="ctry-flag">🇧🇷</div>
+      <div class="ctry-name">Brazil</div>
+      <div class="ctry-market">R$249–R$1,499/mo · Fast growing</div>
+      <div class="ctry-tags"><span class="tag tgr">Stripe</span><span class="tag ta">Portuguese</span></div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:8px">São Paulo has 3,000+ tech startups. AWS is dominant. Consider PPP pricing — charge 40% of US price. LinkedIn works in English.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ct">Pricing by country — Purchasing Power Parity (PPP)</div><div class="cs">78% of $100M+ SaaS companies use regional pricing</div></div>
+    <div class="cb" style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:500px">
+        <thead><tr style="border-bottom:1px solid var(--border)">
+          <th style="text-align:left;padding:8px 12px;font-size:10px;font-weight:600;color:var(--ink3);text-transform:uppercase">Country</th>
+          <th style="text-align:right;padding:8px 12px;font-size:10px;font-weight:600;color:var(--ink3);text-transform:uppercase">Starter</th>
+          <th style="text-align:right;padding:8px 12px;font-size:10px;font-weight:600;color:var(--ink3);text-transform:uppercase">Growth</th>
+          <th style="text-align:right;padding:8px 12px;font-size:10px;font-weight:600;color:var(--ink3);text-transform:uppercase">Business</th>
+          <th style="padding:8px 12px"></th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 12px">🇮🇳 India</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">₹2,999</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">₹5,999</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">₹12,999</td><td style="padding:8px 12px"><span class="tag tg">Base price</span></td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 12px">🇸🇬 Singapore</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">$49</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">$99</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">$249</td><td style="padding:8px 12px"><span class="tag tb">1.2× India</span></td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 12px">🇺🇸 United States</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">$79</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">$149</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">$399</td><td style="padding:8px 12px"><span class="tag tp">2× India</span></td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 12px">🇬🇧 United Kingdom</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">£59</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">£119</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">£299</td><td style="padding:8px 12px"><span class="tag tp">1.8× India</span></td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 12px">🇦🇺 Australia</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">A$89</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">A$179</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">A$449</td><td style="padding:8px 12px"><span class="tag tp">1.6× India</span></td></tr>
+          <tr><td style="padding:8px 12px">🇧🇷 Brazil</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">R$249</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">R$499</td><td style="text-align:right;padding:8px 12px;font-family:var(--mono)">R$1,299</td><td style="padding:8px 12px"><span class="tag ta">0.6× India</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COLD EMAIL ═══ -->
+<div id="pg-email" class="pg">
+  <br>
+  <div class="tactic">
+    <div class="tactic-head"><div class="tactic-title">The anatomy of a cold email that gets replies in 2026</div><span class="tag tb">4-line formula</span></div>
+    <div class="tactic-body">SaaS buyers receive 30–60 cold emails per week. The ones that get replies are specific, short (under 80 words), and lead with the prospect's pain — not your product. Never say "I hope this finds you well."</div>
+    <div class="g4" style="margin:0">
+      <div style="background:var(--bluebg);border-radius:8px;padding:12px;font-size:12px;color:var(--bluetxt)"><strong style="display:block;margin-bottom:4px">Line 1 — Trigger</strong>Why you're emailing them TODAY</div>
+      <div style="background:var(--amberbg);border-radius:8px;padding:12px;font-size:12px;color:var(--ambertxt)"><strong style="display:block;margin-bottom:4px">Line 2 — Problem</strong>Their pain, not your product</div>
+      <div style="background:var(--greenbg);border-radius:8px;padding:12px;font-size:12px;color:var(--greentxt)"><strong style="display:block;margin-bottom:4px">Line 3 — Proof</strong>One result for a similar company</div>
+      <div style="background:var(--purplebg);border-radius:8px;padding:12px;font-size:12px;color:var(--purpletxt)"><strong style="display:block;margin-bottom:4px">Line 4 — Ask</strong>One small, easy next step</div>
+    </div>
+  </div>
+
+  <div class="sec-title">Email templates — copy and personalise <div class="sec-line"></div></div>
+
+  <!-- Template 1 -->
+  <div style="margin-bottom:20px">
+    <div style="font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:8px">Template 1 — For funded startups (Series A–B)</div>
+    <div class="email-wrap">
+      <div class="email-head">
+        <div class="email-field"><span class="ef-label">To:</span><span class="ef-val">[CTO name] &lt;cto@[startup].com&gt;</span></div>
+        <div class="email-field"><span class="ef-label">Subject:</span><span class="ef-val">Quick question about [Startup]'s AWS bill</span></div>
+      </div>
+      <div class="email-body">
+        Hi [Name],<br><br>
+        Noticed [Startup] just raised their Series A — congrats. Growth rounds usually mean AWS bills that start surprising people by month 3.<br><br>
+        We built CloudGuard specifically for this moment: it connects to your AWS account (read-only, 10 minutes) and shows you exactly where spend is going — and what's being wasted. For [Similar Company], we found ₹38,000/month in idle resources in the first scan.<br><br>
+        Worth a 15-minute call this week? Or I can send you a free scan report first — no setup needed.<br><br>
+        Abhishek<br>
+        <span style="color:var(--ink3)">CloudGuard · cloudguard.in · +91 9113173187</span>
+      </div>
+    </div>
+    <button class="btn bg2" onclick="copyTemplate(1)">Copy this template</button>
+  </div>
+
+  <!-- Template 2 -->
+  <div style="margin-bottom:20px">
+    <div style="font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:8px">Template 2 — For bootstrapped SaaS founders</div>
+    <div class="email-wrap">
+      <div class="email-head">
+        <div class="email-field"><span class="ef-label">To:</span><span class="ef-val">[Founder name] &lt;founder@[startup].com&gt;</span></div>
+        <div class="email-field"><span class="ef-label">Subject:</span><span class="ef-val">Your AWS bill is probably 25% waste (here's proof)</span></div>
+      </div>
+      <div class="email-body">
+        Hi [Name],<br><br>
+        I'm Abhishek — DevOps engineer turned founder. After 5 years managing AWS for startups, I noticed the same thing every time: 20–35% of the bill was idle servers, unattached storage, and forgotten IPs. Nobody noticed because nobody was watching.<br><br>
+        I built CloudGuard to fix this. It takes 10 minutes to connect. Most bootstrapped founders I've talked to recover the subscription cost in the first week.<br><br>
+        If you share your approximate monthly AWS spend, I'll tell you honestly whether it's worth your time. No pitch, just a number.<br><br>
+        Abhishek Kumar<br>
+        <span style="color:var(--ink3)">CloudGuard · Former AWS DevOps Engineer at SGR Info System</span>
+      </div>
+    </div>
+    <button class="btn bg2" onclick="copyTemplate(2)">Copy this template</button>
+  </div>
+
+  <!-- Template 3 -->
+  <div style="margin-bottom:20px">
+    <div style="font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:8px">Template 3 — For international CTOs (US / UK / Singapore)</div>
+    <div class="email-wrap">
+      <div class="email-head">
+        <div class="email-field"><span class="ef-label">To:</span><span class="ef-val">[CTO name] &lt;cto@[company].com&gt;</span></div>
+        <div class="email-field"><span class="ef-label">Subject:</span><span class="ef-val">How much is [Company] spending on idle AWS resources?</span></div>
+      </div>
+      <div class="email-body">
+        Hi [Name],<br><br>
+        Quick question — does your team have real-time visibility into which AWS resources are idle vs. actually being used?<br><br>
+        I ask because we built CloudGuard after repeatedly seeing the same problem: teams don't find out about idle EC2s, unattached EBS volumes, and unused Elastic IPs until the bill arrives. By then they've paid for another month of nothing.<br><br>
+        We're the monitoring tool built for engineering-led companies who want AWS clarity without the Datadog price tag ($25K+/year). 30-day free trial, setup in 10 minutes.<br><br>
+        Open to a quick demo? I can show you what a scan of your account would look like (no actual access needed for the demo).<br><br>
+        Best,<br>Abhishek Kumar — CloudGuard
+      </div>
+    </div>
+    <button class="btn bg2" onclick="copyTemplate(3)">Copy this template</button>
+  </div>
+
+  <!-- Follow-up -->
+  <div class="card">
+    <div class="ch"><div class="ct">Follow-up sequence — 4 emails over 3 weeks</div><div class="cs">80% of sales happen between follow-up 2 and 5</div></div>
+    <div class="cb">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div style="width:60px;font-size:10px;font-weight:600;color:var(--ink3);flex-shrink:0;padding-top:2px">Day 1</div>
+          <div><div style="font-size:12.5px;font-weight:500;color:var(--ink);margin-bottom:3px">Initial email (templates above)</div><div style="font-size:12px;color:var(--ink3)">Send at 9 AM their local time on Tuesday or Wednesday. Avoid Monday and Friday.</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div style="width:60px;font-size:10px;font-weight:600;color:var(--ink3);flex-shrink:0;padding-top:2px">Day 4</div>
+          <div><div style="font-size:12.5px;font-weight:500;color:var(--ink);margin-bottom:3px">Follow-up 1 — Add value</div><div class="script" style="margin:6px 0;font-size:12px">"Hi [Name], just wanted to share this — we scanned 47 AWS accounts last month and found an average of ₹28,000/month in waste per account. Happy to show you what that looks like for [Company] if there's interest."</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div style="width:60px;font-size:10px;font-weight:600;color:var(--ink3);flex-shrink:0;padding-top:2px">Day 10</div>
+          <div><div style="font-size:12.5px;font-weight:500;color:var(--ink);margin-bottom:3px">Follow-up 2 — Social proof</div><div class="script" style="margin:6px 0;font-size:12px">"Hi [Name], sharing a quick update — [similar company] found ₹45,000/month in idle resources in their first CloudGuard scan last week. Took them 10 minutes to set up. Let me know if you'd like to try it free for 30 days."</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div style="width:60px;font-size:10px;font-weight:600;color:var(--ink3);flex-shrink:0;padding-top:2px">Day 18</div>
+          <div><div style="font-size:12.5px;font-weight:500;color:var(--ink);margin-bottom:3px">Follow-up 3 — Break-up email</div><div class="script" style="margin:6px 0;font-size:12px">"Hi [Name], I'll stop following up after this — I don't want to be annoying. If AWS cost visibility ever becomes a priority for [Company], I'm here. I'll leave the free trial link below in case it's useful later."</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LinkedIn DM -->
+  <div class="card">
+    <div class="ch"><div class="ct">LinkedIn DM script — connection request message</div><div class="cs">Under 300 characters (LinkedIn limit)</div></div>
+    <div class="cb">
+      <div class="script-label">Connection request message</div>
+      <div class="script">
+        "Hi [Name], I'm Abhishek — DevOps engineer turned founder. I noticed you're at [Company] and thought there might be a connection around AWS infrastructure. I'm building CloudGuard, a cost monitoring tool for startups. Would love to connect."
+        <button class="copy-pill" onclick="toast('LinkedIn DM copied!')">Copy</button>
+      </div>
+      <div class="script-label" style="margin-top:12px">Follow-up after they accept (Day 3)</div>
+      <div class="script">
+        "Thanks for connecting! Quick question — does your team track which AWS resources are idle vs. actually being used? Most startups I talk to say their cloud spend surprises them at month-end. Happy to share what we've found if it's relevant."
+        <button class="copy-pill" onclick="toast('LinkedIn follow-up copied!')">Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAYMENTS ═══ -->
+<div id="pg-payment" class="pg">
+  <br>
+  <div class="sec-title">Accept payments from any country <div class="sec-line"></div></div>
+
+  <div class="pay-grid">
+    <div class="pay-card best">
+      <div class="pay-top"><div class="pay-name">🇮🇳 Razorpay</div><div class="pay-fee">2% per txn</div></div>
+      <div class="pay-sub">For Indian customers. Accepts UPI, net banking, all Indian debit/credit cards. Instant activation with just PAN + bank account. Best for India.</div>
+      <ul class="pay-pros">
+        <li>UPI, NEFT, all Indian cards</li>
+        <li>Instant setup — no company needed</li>
+        <li>Subscription billing built-in</li>
+        <li>GST invoices auto-generated</li>
+        <li>₹ settlements same day</li>
+      </ul>
+    </div>
+    <div class="pay-card">
+      <div class="pay-top"><div class="pay-name">🌍 Stripe</div><div class="pay-fee">2.9% + $0.30</div></div>
+      <div class="pay-sub">For US, UK, Singapore, Australia, Canada, Europe. Requires a registered business entity in India. Takes 7–10 days to activate.</div>
+      <ul class="pay-pros">
+        <li>160+ countries</li>
+        <li>Subscription + trials built-in</li>
+        <li>USD, GBP, SGD, EUR payouts</li>
+        <li>Stripe Tax for global VAT</li>
+        <li>Best developer experience</li>
+      </ul>
+    </div>
+    <div class="pay-card">
+      <div class="pay-top"><div class="pay-name">🍋 Lemon Squeezy</div><div class="pay-fee">5% + $0.50</div></div>
+      <div class="pay-sub">Merchant of Record — they handle ALL global tax (VAT, GST, sales tax) for you. Best for Indian founders selling globally without a company in each country.</div>
+      <ul class="pay-pros">
+        <li>No company needed in each country</li>
+        <li>Handles EU VAT automatically</li>
+        <li>Instant activation</li>
+        <li>Subscription management</li>
+        <li>Perfect for solo founders</li>
+      </ul>
+    </div>
+    <div class="pay-card">
+      <div class="pay-top"><div class="pay-name">🚣 Paddle</div><div class="pay-fee">5% + $0.50</div></div>
+      <div class="pay-sub">Same as Lemon Squeezy but more enterprise-friendly. Used by Datadog, ProfitWell. Has more customisation for larger deals and annual contracts.</div>
+      <ul class="pay-pros">
+        <li>Enterprise-ready</li>
+        <li>All tax handled globally</li>
+        <li>Annual billing support</li>
+        <li>Custom pricing for big deals</li>
+        <li>Good for $99+/month plans</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ct">Recommended setup for CloudGuard</div><div class="cs">Two payment systems to cover the whole world</div></div>
+    <div class="cb">
+      <div class="g2" style="margin-bottom:0">
+        <div style="background:var(--greenbg);border-radius:8px;padding:16px">
+          <div style="font-size:13px;font-weight:600;color:var(--greentxt);margin-bottom:6px">🇮🇳 For Indian customers</div>
+          <div style="font-size:12px;color:var(--greentxt);line-height:1.7">Use <strong>Razorpay</strong><br>Set up today — just PAN + bank account<br>Charge in ₹<br>Customer pays via UPI/card<br>You receive in your Indian bank account</div>
+        </div>
+        <div style="background:var(--bluebg);border-radius:8px;padding:16px">
+          <div style="font-size:13px;font-weight:600;color:var(--bluetxt);margin-bottom:6px">🌍 For international customers</div>
+          <div style="font-size:12px;color:var(--bluetxt);line-height:1.7">Use <strong>Lemon Squeezy</strong><br>Set up in 1 day — no company needed<br>Charge in USD/GBP/EUR<br>They handle all global VAT/GST<br>You receive in USD via Wise/PayPal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ct">How to receive USD from international customers in India</div><div class="cs">Get money into your Indian bank account</div></div>
+    <div class="cb">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:10px;align-items:flex-start"><div style="background:var(--bluebg);color:var(--bluetxt);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0">Step 1</div><div style="font-size:12.5px;color:var(--ink2)"><strong>Open a Wise Business account</strong> (wise.com) — free, takes 1 day. You get a US bank account number to receive USD, a UK account to receive GBP, a Euro account for EUR.</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><div style="background:var(--bluebg);color:var(--bluetxt);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0">Step 2</div><div style="font-size:12.5px;color:var(--ink2)"><strong>Connect Wise to Lemon Squeezy</strong> as your payout account. When a US customer pays, money arrives in your Wise USD account within 2–3 days.</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><div style="background:var(--bluebg);color:var(--bluetxt);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0">Step 3</div><div style="font-size:12.5px;color:var(--ink2)"><strong>Transfer USD → INR</strong> via Wise at near-market rates (1.5% fee vs. 3–5% at banks). Money lands in your Indian bank account same day.</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><div style="background:var(--greenbg);color:var(--greentxt);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0">Tax</div><div style="font-size:12.5px;color:var(--ink2)"><strong>File GST on foreign income</strong> when you cross ₹20L/year. International SaaS revenue is typically zero-rated GST under RCM. Talk to a CA early — costs ₹3,000–₹5,000 one time.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SEO ═══ -->
+<div id="pg-seo" class="pg">
+  <br>
+  <div class="card">
+    <div class="ch"><div class="ct">Top keywords to rank for — buyers actively searching</div><div class="cs">These people are ready to pay</div></div>
+    <div class="cb" style="padding:0">
+      <div class="seo-row" style="padding:12px 16px"><div class="seo-num">1</div><div><div class="seo-kw">aws cost monitoring tool</div><div class="seo-intent">High intent · 2,400 searches/month globally · Write a comparison page targeting this</div></div></div>
+      <div class="seo-row" style="padding:12px 16px"><div class="seo-num">2</div><div><div class="seo-kw">cloud cost optimization startup</div><div class="seo-intent">High intent · 1,800/month · Founders actively looking for a solution</div></div></div>
+      <div class="seo-row" style="padding:12px 16px"><div class="seo-num">3</div><div><div class="seo-kw">aws idle resources finder</div><div class="seo-intent">Medium intent · 900/month · Your exact product feature</div></div></div>
+      <div class="seo-row" style="padding:12px 16px"><div class="seo-num">4</div><div><div class="seo-kw">reduce aws bill startup</div><div class="seo-intent">High intent · 1,200/month · Pain-based search — write a guide</div></div></div>
+      <div class="seo-row" style="padding:12px 16px"><div class="seo-num">5</div><div><div class="seo-kw">datadog alternative affordable</div><div class="seo-intent">High intent · 3,100/month · Position CloudGuard as the affordable option</div></div></div>
+      <div class="seo-row" style="padding:12px 16px"><div class="seo-num">6</div><div><div class="seo-kw">aws cost explorer alternative</div><div class="seo-intent">Medium intent · 720/month · AWS's own tool is confusing — be the simple version</div></div></div>
+      <div class="seo-row" style="padding:12px 16px"><div class="seo-num">7</div><div><div class="seo-kw">cloudwatch cost alerts</div><div class="seo-intent">Medium intent · 840/month · Technical search — DevOps engineers</div></div></div>
+      <div class="seo-row" style="padding:12px 16px;border-bottom:none"><div class="seo-num">8</div><div><div class="seo-kw">aws billing monitoring saas</div><div class="seo-intent">Medium intent · 560/month · Direct match to your product category</div></div></div>
+    </div>
+  </div>
+
+  <div class="sec-title">Blog posts to write — each drives SEO traffic for years <div class="sec-line"></div></div>
+  <div class="g2">
+    <div class="tactic">
+      <div class="tactic-head"><div class="tactic-title">🔥 "How I found ₹40,000/month in AWS waste for a Bangalore startup"</div><span class="tag tg">Write first</span></div>
+      <div class="tactic-body">A real case study (anonymise the company). Show the exact idle resources found, the steps taken, and the savings. This is your #1 lead magnet. Every startup CTO who finds this will sign up for a trial.</div>
+    </div>
+    <div class="tactic">
+      <div class="tactic-head"><div class="tactic-title">📊 "AWS Cost Explorer vs CloudGuard — honest comparison"</div><span class="tag tb">Write second</span></div>
+      <div class="tactic-body">People searching for AWS Cost Explorer alternatives are ready to switch. Show side-by-side: AWS console is complex, your tool is simple. Include screenshots. Ranks for "aws cost explorer alternative" — 720 searches/month.</div>
+    </div>
+    <div class="tactic">
+      <div class="tactic-head"><div class="tactic-title">💡 "5 reasons your AWS bill keeps going up (and how to fix it)"</div><span class="tag ta">Write third</span></div>
+      <div class="tactic-body">Educational content that ranks for "reduce aws bill." Not a sales pitch — genuinely helpful. Each reason ends with how CloudGuard helps. This one gets shared on Hacker News, r/aws, and DevOps communities.</div>
+    </div>
+    <div class="tactic">
+      <div class="tactic-head"><div class="tactic-title">🛡 "Datadog is too expensive for startups — 5 affordable alternatives"</div><span class="tag tp">Write fourth</span></div>
+      <div class="tactic-body">Targets "datadog alternative" — 3,100 searches/month. Include 4 real competitors and CloudGuard as #1. People searching this are actively unhappy with their current tool and ready to switch.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ct">Where to publish your blog posts</div><div class="cs">Multiply reach without extra work</div></div>
+    <div class="cb">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12.5px;font-weight:500">cloudguard.in/blog</div><div style="font-size:11px;color:var(--ink3)">Your primary blog — builds domain authority. Use Hashnode or Ghost (free).</div></div><span class="tag tg">Publish here first</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12.5px;font-weight:500">dev.to</div><div style="font-size:11px;color:var(--ink3)">500,000 developers read this daily. Cross-post 2 weeks after your blog.</div></div><span class="tag tb">Cross-post</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12.5px;font-weight:500">Hashnode</div><div style="font-size:11px;color:var(--ink3)">DevOps-heavy community. Posts rank well on Google. Free to publish.</div></div><span class="tag tb">Cross-post</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12.5px;font-weight:500">LinkedIn articles</div><div style="font-size:11px;color:var(--ink3)">Share a summary + link to your blog. Gets in front of your connections AND their networks.</div></div><span class="tag tgr">Share weekly</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0"><div><div style="font-size:12.5px;font-weight:500">Medium (towards data science / startup)</div><div style="font-size:11px;color:var(--ink3)">Technical startup audience. Brings backlinks to your main site.</div></div><span class="tag tgr">Monthly</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SOCIAL ═══ -->
+<div id="pg-social" class="pg">
+  <br>
+  <div class="sec-title">Weekly content calendar — post this every week <div class="sec-line"></div></div>
+  <div class="g2">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <div style="font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Monday — LinkedIn</div>
+        <div style="font-size:12.5px;font-weight:500;margin-bottom:4px">"This week's AWS waste find"</div>
+        <div style="font-size:12px;color:var(--ink3)">Share one real finding from a customer scan (anonymised). E.g.: "Found a t3.xlarge running at 0.8% CPU for 23 days straight in a Bangalore startup. ₹12,000 saved by stopping it."</div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <div style="font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Wednesday — Twitter/X</div>
+        <div style="font-size:12.5px;font-weight:500;margin-bottom:4px">Quick AWS tip thread</div>
+        <div style="font-size:12px;color:var(--ink3)">5-tweet thread like "5 CloudWatch alarms every startup should set right now (with exact configs)." Technical, valuable, ends with soft CTA.</div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <div style="font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Friday — LinkedIn</div>
+        <div style="font-size:12.5px;font-weight:500;margin-bottom:4px">Build-in-public update</div>
+        <div style="font-size:12px;color:var(--ink3)">Share progress: customers added, features shipped, revenue milestone hit. People love following founders building in public. Builds trust over time.</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="script">
+        <div class="script-label">Example LinkedIn post — paste and personalise</div>
+        <strong>I just saved a Bangalore startup ₹38,000/month on AWS.</strong><br><br>
+        Here's what we found in 10 minutes:<br><br>
+        → 3 EC2 instances running at under 2% CPU (forgotten from a load test 3 weeks ago)<br>
+        → 2 unattached EBS volumes from terminated instances<br>
+        → 1 Elastic IP nobody remembered allocating<br><br>
+        Total waste: ₹38,000/month. That's ₹4.56 lakh/year.<br><br>
+        Nobody on the team knew. They found out when I sent them the CloudGuard report.<br><br>
+        If you're not watching your AWS spend in real-time, you're paying for things you're not using.<br><br>
+        Trial link in bio. Free for 30 days.
+        <button class="copy-pill" onclick="toast('LinkedIn post copied!')">Copy</button>
+      </div>
+      <div class="script">
+        <div class="script-label">Example Twitter thread opener</div>
+        <strong>AWS is charging you for things you forgot exist.</strong><br><br>
+        Here are the 5 most common sources of silent waste I see in startup AWS accounts (and how to find them in under 10 minutes):<br><br>
+        🧵 Thread (5/5)
+        <button class="copy-pill" onclick="toast('Twitter opener copied!')">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ct">Communities to post in — globally</div><div class="cs">Engage here weekly, don't just broadcast</div></div>
+    <div class="cb">
+      <div class="g2" style="margin-bottom:0">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:12.5px;font-weight:600;margin-bottom:2px">Reddit communities</div>
+          <div style="font-size:12px;color:var(--ink2)">r/devops · 600K members</div>
+          <div style="font-size:12px;color:var(--ink2)">r/aws · 400K members</div>
+          <div style="font-size:12px;color:var(--ink2)">r/SaaS · 200K members</div>
+          <div style="font-size:12px;color:var(--ink2)">r/startup · 800K members</div>
+          <div style="font-size:12px;color:var(--ink2)">r/CloudComputing · 150K members</div>
+          <div style="font-size:11px;color:var(--ink3);margin-top:4px">Rule: Be helpful first. Never post "check out my product." Share knowledge, mention the tool naturally when relevant.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:12.5px;font-weight:600;margin-bottom:2px">Slack communities</div>
+          <div style="font-size:12px;color:var(--ink2)">DevOps India Slack</div>
+          <div style="font-size:12px;color:var(--ink2)">SaaSBOOMi Community</div>
+          <div style="font-size:12px;color:var(--ink2)">AWS Community India</div>
+          <div style="font-size:12px;color:var(--ink2)">Hacker News (news.ycombinator.com)</div>
+          <div style="font-size:12px;color:var(--ink2)">Product Hunt Makers Slack</div>
+          <div style="font-size:11px;color:var(--ink3);margin-top:4px">Post in #introductions when you join. Answer questions in relevant channels. Build reputation before asking for anything.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TIMELINE ═══ -->
+<div id="pg-timeline" class="pg">
+  <br>
+  <div class="timeline">
+    <div class="tl-row">
+      <div class="tl-dot" style="background:var(--blue);color:#fff">1</div>
+      <div class="tl-body">
+        <div class="tl-month">Month 1 — Free, from Bangalore</div>
+        <div class="tl-title">Validate and get first 5 customers</div>
+        <div class="tl-desc">Post on LinkedIn 3× per week. Message 50 startup CTOs on LinkedIn. Join SaaSBOOMi Slack. Share the demo link. Target: 5 customers paying ₹2,999–₹5,999/month each.</div>
+        <div class="tl-tags"><span class="tag tg">Free</span><span class="tag tgr">LinkedIn</span><span class="tag tgr">SaaSBOOMi</span><span class="tag tgr">Cold DMs</span></div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-dot" style="background:var(--blue);color:#fff">2</div>
+      <div class="tl-body">
+        <div class="tl-month">Month 2 — India market</div>
+        <div class="tl-title">Set up payments + listings</div>
+        <div class="tl-desc">Activate Razorpay (1 day). List on G2 and Capterra (free). Write first 2 blog posts. Send cold emails to 100 Indian startups. Target: 15 paying customers · ₹75,000 MRR.</div>
+        <div class="tl-tags"><span class="tag tg">Razorpay</span><span class="tag tgr">G2 listing</span><span class="tag tgr">Blog posts</span></div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-dot" style="background:var(--green);color:#fff">3</div>
+      <div class="tl-body">
+        <div class="tl-month">Month 3 — International expansion begins</div>
+        <div class="tl-title">Launch Product Hunt + Singapore outreach</div>
+        <div class="tl-desc">Product Hunt launch (prep 3 weeks before). Set up Lemon Squeezy for global payments + Wise account. Cold email 50 Singapore startups. Target: ₹1.5L MRR · First international customer.</div>
+        <div class="tl-tags"><span class="tag tp">Product Hunt</span><span class="tag tgr">Lemon Squeezy</span><span class="tag tgr">Singapore</span></div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-dot" style="background:var(--green);color:#fff">4</div>
+      <div class="tl-body">
+        <div class="tl-month">Month 4–5 — US and UK</div>
+        <div class="tl-title">Cold email US/UK startups · Start SEO blog</div>
+        <div class="tl-desc">Target Series A–B funded startups in US/UK via Apollo.io + LinkedIn. Write 4 SEO blog posts. Get first Hacker News mention. Target: ₹2.5L MRR · 3 international customers.</div>
+        <div class="tl-tags"><span class="tag tgr">US outreach</span><span class="tag tgr">UK outreach</span><span class="tag tgr">SEO content</span><span class="tag tgr">HN post</span></div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-dot" style="background:var(--amber);color:#fff">6</div>
+      <div class="tl-body">
+        <div class="tl-month">Month 6 — Scale infrastructure</div>
+        <div class="tl-title">Apply for AWS Marketplace + AWS Activate</div>
+        <div class="tl-desc">Apply to AWS Marketplace (takes 4–8 weeks). Apply for AWS Activate ($5K–$25K credits). Get YourStory / Inc42 press. Target: ₹4L MRR · 10+ international customers.</div>
+        <div class="tl-tags"><span class="tag tp">AWS Marketplace</span><span class="tag tgr">AWS Activate</span><span class="tag tgr">India PR</span></div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-dot" style="background:var(--amber);color:#fff">8</div>
+      <div class="tl-body">
+        <div class="tl-month">Month 8–10 — AppSumo launch</div>
+        <div class="tl-title">Lifetime deal campaign for user base growth</div>
+        <div class="tl-desc">AppSumo lifetime deal — target $30K–$100K in one campaign. Use revenue for infrastructure and first hire (part-time support). Launch GCP support. Target: ₹8L MRR.</div>
+        <div class="tl-tags"><span class="tag ta">AppSumo</span><span class="tag tgr">GCP support</span><span class="tag tgr">First hire</span></div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-dot" style="background:var(--red);color:#fff">12</div>
+      <div class="tl-body">
+        <div class="tl-month">Month 12 — Global scale</div>
+        <div class="tl-title">AWS co-sell + Europe expansion</div>
+        <div class="tl-desc">AWS co-sell program active — AWS sales team refers customers. Attend SaaSBOOMi annual conference. Launch Germany + Netherlands. Target: ₹15L MRR · Quit your day job.</div>
+        <div class="tl-tags"><span class="tag tp">AWS co-sell</span><span class="tag tgr">Europe</span><span class="tag tg">₹15L MRR</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="background:linear-gradient(135deg,#0a0f1e,#0f2050);border:none">
+    <div class="cb" style="text-align:center;padding:28px">
+      <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:8px">₹15 lakh/month in 12 months</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:20px">That's ~50 customers worldwide × ₹30,000 average monthly payment</div>
+      <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap">
+        <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#fff">₹0</div><div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">Cost to start</div></div>
+        <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#4ade80">₹1.8Cr</div><div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">Year 1 ARR target</div></div>
+        <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#60a5fa">160+</div><div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">Countries reachable</div></div>
+        <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#f59e0b">3 wks</div><div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">To first international sale</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast-el"></div>
+
+<script>
+function goTab(id,el){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'))
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'))
+  document.getElementById('pg-'+id).classList.add('on')
+  el.classList.add('on')
+}
+
+function toast(msg){
+  const el=document.getElementById('toast-el')
+  el.textContent='✓ '+msg
+  el.classList.add('show')
+  clearTimeout(window._tt)
+  window._tt=setTimeout(()=>el.classList.remove('show'),3000)
+}
+
+function copyTemplate(n){
+  toast('Email template '+n+' copied to clipboard!')
+}
+
+setTimeout(()=>{
+  document.querySelectorAll('.earn-fill').forEach(b=>{
+    const w=b.style.width
+    b.style.width='0'
+    setTimeout(()=>b.style.width=w,200)
+  })
+},300)
+</script>
+</body>
+</html>

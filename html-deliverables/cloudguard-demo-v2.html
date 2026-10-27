@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CloudGuard — Full Interactive Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#111318;--ink2:#4b5263;--ink3:#8c93a0;--ink4:#c2c8d4;
+  --bg:#f6f7f9;--white:#ffffff;
+  --border:#e4e7ed;--border2:#d0d5de;
+  --blue:#0057ff;--blue-dim:#dde8ff;--blue-txt:#0044cc;
+  --green:#00875a;--green-dim:#d8f2e9;
+  --red:#d63a30;--red-dim:#fce8e7;
+  --amber:#b45309;--amber-dim:#fef3c7;
+  --purple:#6d28d9;--purple-dim:#ede9fe;
+  --sidebar:212px;
+  --font:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:13px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden;height:100vh}
+
+/* ── Shell ── */
+.shell{display:flex;height:100vh;overflow:hidden}
+
+/* ── Sidebar ── */
+.sidebar{width:var(--sidebar);background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;height:100vh}
+.sb-logo{display:flex;align-items:center;gap:9px;padding:16px;border-bottom:1px solid var(--border)}
+.sb-mark{width:30px;height:30px;border-radius:8px;background:var(--blue);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-name{font-size:13px;font-weight:600}
+.sb-plan{font-size:10px;color:var(--ink3)}
+.nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:1px;overflow-y:auto}
+.ni{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:7px;font-size:12.5px;color:var(--ink2);cursor:pointer;transition:all .12s;border:none;background:transparent;width:100%;text-align:left}
+.ni:hover{background:var(--bg);color:var(--ink)}
+.ni.active{background:var(--blue-dim);color:var(--blue-txt);font-weight:500}
+.ni-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.ni-badge{margin-left:auto;font-size:9px;font-weight:600;background:var(--red-dim);color:var(--red);padding:1px 6px;border-radius:10px}
+.sb-user{border-top:1px solid var(--border);padding:12px 14px}
+.sb-user-row{display:flex;align-items:center;gap:9px}
+.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--blue-dim);color:var(--blue-txt);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-email{font-size:11px;font-weight:500;line-height:1.3}
+.sb-role{font-size:10px;color:var(--ink3)}
+
+/* ── Main area ── */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10}
+.tb-title{font-size:14px;font-weight:600}
+.tb-sub{font-size:11px;color:var(--ink3);margin-top:1px}
+.tb-right{display:flex;align-items:center;gap:8px}
+.sync-pill{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green);background:var(--green-dim);padding:4px 10px;border-radius:20px;font-weight:500}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ── Pages ── */
+.pg{display:none;flex:1;padding:22px 24px}
+.pg.active{display:block}
+
+/* ── Grid ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+
+/* ── Stat card ── */
+.sc{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px}
+.sc-lbl{font-size:10px;font-weight:500;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.sc-val{font-size:22px;font-weight:600;letter-spacing:-.5px;line-height:1;margin-bottom:4px}
+.sc-sub{font-size:11px;color:var(--ink3);display:flex;align-items:center;gap:5px}
+.up{color:var(--red);font-weight:500}
+.dn{color:var(--green);font-weight:500}
+
+/* ── Card ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:10px;margin-bottom:14px}
+.card:last-child{margin-bottom:0}
+.ch{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ct{font-size:12.5px;font-weight:500}
+.cs{font-size:11px;color:var(--ink3)}
+.cb{padding:16px 18px}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--font);font-size:12px;font-weight:500;padding:7px 14px;border-radius:7px;cursor:pointer;transition:all .12s;border:none;white-space:nowrap}
+.btn-p{background:var(--blue);color:#fff}
+.btn-p:hover{background:#0044cc}
+.btn-g{background:transparent;color:var(--ink2);border:1px solid var(--border)}
+.btn-g:hover{border-color:var(--border2);color:var(--ink)}
+.btn-d{background:var(--red-dim);color:var(--red);border:1px solid #fca5a5}
+.btn-d:hover{background:#fee2e2}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+/* ── Tags ── */
+.tag{display:inline-flex;align-items:center;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.tg{background:var(--green-dim);color:var(--green)}
+.tr{background:var(--red-dim);color:var(--red)}
+.ta{background:var(--amber-dim);color:var(--amber)}
+.tb{background:var(--blue-dim);color:var(--blue-txt)}
+.tgr{background:#f0f1f3;color:var(--ink2)}
+.tp{background:var(--purple-dim);color:var(--purple)}
+
+/* ── Alert ── */
+.alert{border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;display:flex;align-items:flex-start;gap:8px;border:1px solid}
+.a-warn{background:#fffbeb;border-color:#fcd34d;color:#92400e}
+.a-info{background:var(--blue-dim);border-color:#93c5fd;color:var(--blue-txt)}
+.a-ok{background:var(--green-dim);border-color:#86efac;color:var(--green)}
+
+/* ── Table ── */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;padding:9px 14px;font-size:10px;font-weight:500;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#fafbfc}
+.mono{font-family:var(--mono);font-size:11px}
+
+/* ── Budget bar ── */
+.bw{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:14px}
+.bm{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.bt{height:7px;background:#eef0f3;border-radius:4px;overflow:hidden}
+.bf{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+
+/* ── Resource row ── */
+.rr{display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);transition:background .1s}
+.rr:last-child{border-bottom:none}
+.rr:hover{background:#fafbfc}
+.ri{font-size:18px;width:28px;text-align:center;flex-shrink:0}
+.rinfo{flex:1;min-width:0}
+.rname{font-size:12.5px;font-weight:500;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.rmeta{font-size:11px;color:var(--ink3);margin-top:2px}
+.rc{text-align:right;flex-shrink:0}
+.rcv{font-size:13px;font-weight:600;color:var(--red)}
+.rcs{font-size:10px;color:var(--ink3)}
+
+/* ── Toggle ── */
+.trow{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border)}
+.trow:last-child{border-bottom:none}
+.tgl{width:36px;height:20px;border-radius:10px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.tgl-k{position:absolute;top:3px;width:14px;height:14px;border-radius:50%;background:white;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:left .2s}
+.on{background:var(--blue)}.off{background:var(--border2)}
+.on .tgl-k{left:18px}.off .tgl-k{left:3px}
+
+/* ── Range ── */
+input[type=range]{accent-color:var(--blue);width:100%}
+.rng-row{display:flex;align-items:center;gap:10px}
+.rng-val{font-size:13px;font-weight:600;color:var(--blue);min-width:36px;text-align:right}
+
+/* ── Plan card ── */
+.plan-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:22px;position:relative}
+.plan-card.current{border:2px solid var(--blue)}
+.plan-card.dim{opacity:.65}
+.plan-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-size:10px;font-weight:500;padding:2px 12px;border-radius:20px;white-space:nowrap}
+
+/* ── Chart bars (pure CSS) ── */
+.hbar-wrap{display:flex;flex-direction:column;gap:10px;padding:4px 0}
+.hbar-row{display:flex;align-items:center;gap:10px}
+.hbar-label{font-size:11px;color:var(--ink2);width:80px;flex-shrink:0;text-align:right}
+.hbar-track{flex:1;height:14px;background:#f0f1f3;border-radius:4px;overflow:hidden}
+.hbar-fill{height:100%;border-radius:4px;transition:width .8s ease}
+.hbar-val{font-size:11px;font-family:var(--mono);color:var(--ink2);min-width:52px}
+
+/* ── Sparkline area ── */
+.spark{width:100%;height:180px}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--ink);color:white;font-size:12px;padding:10px 16px;border-radius:8px;display:flex;align-items:center;gap:8px;transform:translateY(60px);opacity:0;transition:all .25s;z-index:999;max-width:340px;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ── Demo banner ── */
+.demo-bar{background:linear-gradient(90deg,#0057ff,#0099ff);color:#fff;font-size:11px;font-weight:500;text-align:center;padding:5px;letter-spacing:.01em;flex-shrink:0}
+
+/* ── WhatsApp preview ── */
+.wa-bubble{background:#dcfce7;border-radius:12px 12px 2px 12px;padding:10px 14px;font-size:11.5px;line-height:1.6;max-width:300px;position:relative;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.wa-time{font-size:10px;color:#6b7280;text-align:right;margin-top:4px}
+
+/* ── Onboarding step ── */
+.step-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+.step-num{width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-done{background:var(--green)}
+.step-body{flex:1}
+.step-title{font-size:13px;font-weight:500;margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--ink3);line-height:1.6}
+
+/* ── Code block ── */
+.code{background:#0d1117;border-radius:8px;padding:14px 16px;font-family:var(--mono);font-size:11px;color:#79c0ff;line-height:1.8;margin:10px 0;overflow-x:auto}
+.code .cm{color:#484f57;font-style:italic}
+.code .kw{color:#ff7b72}
+.code .str{color:#a5d6ff}
+.code .fn{color:#d2a8ff}
+
+/* ── Animate ── */
+@keyframes fadeOut{to{opacity:0;height:0;padding:0;overflow:hidden}}
+.dismissing{animation:fadeOut .3s ease forwards}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.slide-in{animation:slideIn .3s ease forwards}
+</style>
+</head>
+<body>
+
+<div style="display:flex;flex-direction:column;height:100vh">
+<div class="demo-bar">🎯 CloudGuard — Full Interactive Demo &nbsp;·&nbsp; Click any nav item to explore &nbsp;·&nbsp; All data is simulated</div>
+
+<div class="shell" style="flex:1;overflow:hidden">
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">CG</div>
+    <div><div class="sb-name">CloudGuard</div><div class="sb-plan">Growth plan · Trial ends Oct 1</div></div>
+  </div>
+  <nav class="nav">
+    <button class="ni active" onclick="nav('dashboard',this)"><span class="ni-icon">▦</span>Dashboard</button>
+    <button class="ni" onclick="nav('costs',this)"><span class="ni-icon">₹</span>Cost History</button>
+    <button class="ni" onclick="nav('resources',this)"><span class="ni-icon">⚡</span>Idle Resources<span class="ni-badge">7</span></button>
+    <button class="ni" onclick="nav('accounts',this)"><span class="ni-icon">☁</span>AWS Accounts</button>
+    <button class="ni" onclick="nav('alerts',this)"><span class="ni-icon">🔔</span>Alert Settings</button>
+    <button class="ni" onclick="nav('reports',this)"><span class="ni-icon">📄</span>Weekly Reports</button>
+    <button class="ni" onclick="nav('billing',this)"><span class="ni-icon">💳</span>Billing</button>
+  </nav>
+  <div class="sb-user">
+    <div class="sb-user-row">
+      <div class="sb-avatar">A</div>
+      <div><div class="sb-email">abhishekkumarise@gmail.com</div><div class="sb-role">SGR Info System · Admin</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+<!-- ─── DASHBOARD ─────────────────────────────────────────────────────────── -->
+<div id="pg-dashboard" class="pg active">
+  <div class="topbar">
+    <div><div class="tb-title">Good morning, SGR Info System 👋</div><div class="tb-sub">AWS cost snapshot · Sep 24, 2025</div></div>
+    <div class="tb-right">
+      <div class="sync-pill"><div class="sync-dot"></div>Synced 06:02 IST</div>
+      <button class="btn btn-g btn-sm" onclick="toast('Manual sync queued — refreshes in ~2 min')">↻ Sync now</button>
+    </div>
+  </div>
+  <div style="padding:20px 24px">
+
+  <div class="alert a-warn"><span>⚠️</span><span>Spend is at <strong>84%</strong> of your ₹2,00,000 budget. Projected month-end: <strong>₹2,14,600</strong>. <a href="#" onclick="nav('resources',document.querySelectorAll('.ni')[2]);return false" style="color:inherit;font-weight:600;text-decoration:underline">7 idle resources could save ₹41,350/mo →</a></span></div>
+
+  <div class="g4">
+    <div class="sc"><div class="sc-lbl">This month <span>₹</span></div><div class="sc-val">₹1,68,240</div><div class="sc-sub"><span class="up">↑ 18.4%</span>vs Aug</div></div>
+    <div class="sc"><div class="sc-lbl">Month-end forecast <span>📈</span></div><div class="sc-val">₹2,14,600</div><div class="sc-sub">projected total</div></div>
+    <div class="sc"><div class="sc-lbl">Potential savings <span>💡</span></div><div class="sc-val">₹41,350</div><div class="sc-sub">7 idle resources</div></div>
+    <div class="sc"><div class="sc-lbl">Budget used <span>🎯</span></div><div class="sc-val" style="color:#b45309">84%</div><div class="sc-sub">of ₹2,00,000</div></div>
+  </div>
+
+  <div class="bw">
+    <div class="bm"><span style="font-size:11px;color:var(--ink3)">Monthly budget — Sep 2025</span><span style="font-size:11px;font-weight:500">₹1,68,240 of ₹2,00,000</span></div>
+    <div class="bt"><div class="bf" id="bfill" style="width:0%;background:#f59e0b"></div></div>
+    <div style="font-size:10.5px;color:#b45309;margin-top:6px">⚠ 84% used · ₹31,760 remaining · resets Oct 1</div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><div class="ct">Monthly cost trend</div><div class="cs">Apr – Sep 2025</div></div>
+      <div class="cb" style="padding-top:8px">
+        <svg class="spark" viewBox="0 0 420 175" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="ga" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0057ff" stop-opacity=".2"/>
+              <stop offset="100%" stop-color="#0057ff" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="gf" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f59e0b" stop-opacity=".2"/>
+              <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <line x1="44" y1="38" x2="410" y2="38" stroke="#eef0f3" stroke-width="1"/>
+          <line x1="44" y1="78" x2="410" y2="78" stroke="#eef0f3" stroke-width="1"/>
+          <line x1="44" y1="118" x2="410" y2="118" stroke="#eef0f3" stroke-width="1"/>
+          <line x1="44" y1="155" x2="410" y2="155" stroke="#eef0f3" stroke-width="1"/>
+          <text x="0" y="41" font-size="9" fill="#c2c8d4" font-family="JetBrains Mono,monospace">₹2.5L</text>
+          <text x="0" y="81" font-size="9" fill="#c2c8d4" font-family="JetBrains Mono,monospace">₹2.0L</text>
+          <text x="0" y="121" font-size="9" fill="#c2c8d4" font-family="JetBrains Mono,monospace">₹1.5L</text>
+          <text x="0" y="155" font-size="9" fill="#c2c8d4" font-family="JetBrains Mono,monospace">₹1.0L</text>
+          <!-- Actual area: Apr=₹1.2L→148, May=₹1.27L→143, Jun=₹1.33L→138, Jul=₹1.48L→128, Aug=₹1.42L→132, Sep=₹1.68L→118 -->
+          <polygon points="60,148 116,143 172,138 228,128 284,132 340,118 340,155 60,155" fill="url(#ga)"/>
+          <polyline points="60,148 116,143 172,138 228,128 284,132 340,118" fill="none" stroke="#0057ff" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+          <!-- Forecast dashed to ₹2.15L→102 -->
+          <polygon points="340,118 390,102 390,155 340,155" fill="url(#gf)" opacity=".7"/>
+          <polyline points="340,118 390,102" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5,3"/>
+          <circle cx="60"  cy="148" r="3.5" fill="#0057ff"/>
+          <circle cx="116" cy="143" r="3.5" fill="#0057ff"/>
+          <circle cx="172" cy="138" r="3.5" fill="#0057ff"/>
+          <circle cx="228" cy="128" r="3.5" fill="#0057ff"/>
+          <circle cx="284" cy="132" r="3.5" fill="#0057ff"/>
+          <circle cx="340" cy="118" r="5" fill="#0057ff" stroke="white" stroke-width="2.5"/>
+          <circle cx="390" cy="102" r="4" fill="#f59e0b" stroke="white" stroke-width="2"/>
+          <text x="52"  y="170" font-size="9" fill="#b8bec9" text-anchor="middle" font-family="Inter,sans-serif">Apr</text>
+          <text x="108" y="170" font-size="9" fill="#b8bec9" text-anchor="middle" font-family="Inter,sans-serif">May</text>
+          <text x="164" y="170" font-size="9" fill="#b8bec9" text-anchor="middle" font-family="Inter,sans-serif">Jun</text>
+          <text x="220" y="170" font-size="9" fill="#b8bec9" text-anchor="middle" font-family="Inter,sans-serif">Jul</text>
+          <text x="276" y="170" font-size="9" fill="#b8bec9" text-anchor="middle" font-family="Inter,sans-serif">Aug</text>
+          <text x="336" y="170" font-size="9" fill="#b8bec9" text-anchor="middle" font-family="Inter,sans-serif">Sep</text>
+          <text x="390" y="170" font-size="9" fill="#f59e0b" text-anchor="middle" font-family="Inter,sans-serif">Fcst</text>
+          <circle cx="178" cy="12" r="4" fill="#0057ff"/>
+          <text x="186" y="16" font-size="9" fill="#8c93a0" font-family="Inter,sans-serif">Actual</text>
+          <line x1="240" y1="12" x2="256" y2="12" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4,2"/>
+          <text x="260" y="16" font-size="9" fill="#8c93a0" font-family="Inter,sans-serif">Forecast</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Top services — Sep 2025</div><div class="cs">By INR spend</div></div>
+      <div class="cb">
+        <div class="hbar-wrap">
+          <div class="hbar-row"><span class="hbar-label">EC2</span><div class="hbar-track"><div class="hbar-fill" style="width:0%;background:#0057ff" data-w="78%"></div></div><span class="hbar-val">₹84,001</span></div>
+          <div class="hbar-row"><span class="hbar-label">RDS</span><div class="hbar-track"><div class="hbar-fill" style="width:0%;background:#3b82f6" data-w="36%"></div></div><span class="hbar-val">₹37,993</span></div>
+          <div class="hbar-row"><span class="hbar-label">CloudFront</span><div class="hbar-track"><div class="hbar-fill" style="width:0%;background:#60a5fa" data-w="20%"></div></div><span class="hbar-val">₹20,959</span></div>
+          <div class="hbar-row"><span class="hbar-label">S3</span><div class="hbar-track"><div class="hbar-fill" style="width:0%;background:#93c5fd" data-w="12%"></div></div><span class="hbar-val">₹12,943</span></div>
+          <div class="hbar-row"><span class="hbar-label">Lambda</span><div class="hbar-track"><div class="hbar-fill" style="width:0%;background:#bfdbfe" data-w="7%"></div></div><span class="hbar-val">₹7,014</span></div>
+          <div class="hbar-row"><span class="hbar-label">Other</span><div class="hbar-track"><div class="hbar-fill" style="width:0%;background:#e0e7ff" data-w="4%"></div></div><span class="hbar-val">₹5,330</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ct">⚡ Top idle resources — act now to save ₹41,350/month</div><button class="btn btn-g btn-sm" onclick="nav('resources',document.querySelectorAll('.ni')[2])">View all 7 →</button></div>
+    <div class="rr"><div class="ri">🖥</div><div class="rinfo"><div class="rname">prod-worker-03 <span class="tag tgr">EC2 t3.xlarge</span><span class="tag tr">1.2% CPU</span></div><div class="rmeta">📍 ap-south-1a · Running 24×7 · Last activity 18 days ago</div></div><div class="rc"><div class="rcv">₹12,410/mo</div><div class="rcs">idle waste</div></div><button class="btn btn-d btn-sm" onclick="toast('Dismissed — still running in AWS until you stop it in console')">Dismiss</button></div>
+    <div class="rr"><div class="ri">💾</div><div class="rinfo"><div class="rname">vol-0abc123def <span class="tag tgr">EBS 500GB gp3</span></div><div class="rmeta">📍 ap-south-1 · Unattached — detached 23 days ago from terminated instance</div></div><div class="rc"><div class="rcv">₹4,320/mo</div><div class="rcs">idle waste</div></div><button class="btn btn-d btn-sm" onclick="toast('Dismissed')">Dismiss</button></div>
+    <div class="rr"><div class="ri">🗄</div><div class="rinfo"><div class="rname">test-db-replica <span class="tag tgr">RDS db.t3.medium</span><span class="tag ta">3.1% conn</span></div><div class="rmeta">📍 ap-south-1 · Read replica · Zero queries in 14 days</div></div><div class="rc"><div class="rcv">₹9,860/mo</div><div class="rcs">idle waste</div></div><button class="btn btn-d btn-sm" onclick="toast('Dismissed')">Dismiss</button></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><div class="ct">Connected AWS accounts</div><button class="btn btn-g btn-sm" onclick="nav('accounts',document.querySelectorAll('.ni')[3])">Manage →</button></div>
+      <div style="padding:4px 0">
+        <div class="rr"><div style="width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0"></div><div class="rinfo"><div style="font-size:12.5px;font-weight:500">Production <span class="mono" style="font-size:10px;color:var(--ink3);background:#f0f1f3;padding:1px 6px;border-radius:4px">447812345678</span></div><div class="rmeta">Synced today 06:02 IST · 5 months history</div></div></div>
+        <div class="rr"><div style="width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0"></div><div class="rinfo"><div style="font-size:12.5px;font-weight:500">Staging <span class="mono" style="font-size:10px;color:var(--ink3);background:#f0f1f3;padding:1px 6px;border-radius:4px">889923456789</span></div><div class="rmeta">Synced today 06:04 IST · 3 months history</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Last WhatsApp alert sent</div><div class="cs">Today 06:03 IST</div></div>
+      <div class="cb">
+        <div class="wa-bubble">
+          ☁️ <strong>CloudGuard Alert</strong><br>
+          <strong>SGR Info System</strong><br><br>
+          AWS spend: <strong>₹1,68,240</strong> (84% of budget)<br>
+          Budget: ₹2,00,000<br>
+          Projected month-end: ₹2,14,600<br><br>
+          ⚡ 7 idle resources found — ₹41,350/mo savings available<br><br>
+          Dashboard: cloudguard.in/dashboard
+          <div class="wa-time">06:03 ✓✓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+<!-- ─── COST HISTORY ──────────────────────────────────────────────────────── -->
+<div id="pg-costs" class="pg">
+  <div class="topbar"><div><div class="tb-title">Cost History</div><div class="tb-sub">6 months · 2 AWS accounts</div></div><button class="btn btn-g btn-sm" onclick="toast('CSV exported — check your downloads folder')">⬇ Export CSV</button></div>
+  <div style="padding:20px 24px">
+  <div class="g2">
+    <div class="card">
+      <div class="ch"><div class="ct">Monthly summary</div></div>
+      <table class="tbl">
+        <thead><tr><th>Month</th><th>Total (INR)</th><th>Change</th><th>Forecast</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Sep 2025</strong> <span class="tag tb" style="font-size:9px">Live</span></td><td class="mono" style="font-weight:600">₹1,68,240</td><td><span class="up">↑ 18.4%</span></td><td class="mono">₹2,14,600</td></tr>
+          <tr><td>Aug 2025</td><td class="mono">₹1,42,080</td><td><span class="dn">↓ 4.2%</span></td><td class="mono">—</td></tr>
+          <tr><td>Jul 2025</td><td class="mono">₹1,48,320</td><td><span class="up">↑ 11.2%</span></td><td class="mono">—</td></tr>
+          <tr><td>Jun 2025</td><td class="mono">₹1,33,380</td><td><span class="up">↑ 5.4%</span></td><td class="mono">—</td></tr>
+          <tr><td>May 2025</td><td class="mono">₹1,26,540</td><td><span class="up">↑ 5.8%</span></td><td class="mono">—</td></tr>
+          <tr><td>Apr 2025</td><td class="mono">₹1,19,620</td><td>—</td><td class="mono">—</td></tr>
+          <tr style="background:#fafbfc;font-weight:600"><td>6-month total</td><td class="mono">₹8,38,180</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Sep 2025 — by service</div></div>
+      <table class="tbl">
+        <thead><tr><th>Service</th><th>USD</th><th>INR</th><th>%</th></tr></thead>
+        <tbody>
+          <tr><td>Amazon EC2</td><td class="mono">$1,006</td><td class="mono"><strong>₹84,001</strong></td><td><span class="tag tgr">50%</span></td></tr>
+          <tr><td>Amazon RDS</td><td class="mono">$455</td><td class="mono"><strong>₹37,993</strong></td><td><span class="tag tgr">23%</span></td></tr>
+          <tr><td>CloudFront</td><td class="mono">$251</td><td class="mono"><strong>₹20,959</strong></td><td><span class="tag tgr">12%</span></td></tr>
+          <tr><td>Amazon S3</td><td class="mono">$155</td><td class="mono"><strong>₹12,943</strong></td><td><span class="tag tgr">8%</span></td></tr>
+          <tr><td>AWS Lambda</td><td class="mono">$84</td><td class="mono"><strong>₹7,014</strong></td><td><span class="tag tgr">4%</span></td></tr>
+          <tr><td>ELB / NAT</td><td class="mono">$64</td><td class="mono"><strong>₹5,344</strong></td><td><span class="tag tgr">3%</span></td></tr>
+          <tr style="background:#fafbfc;font-weight:600"><td>Total</td><td class="mono">$2,015</td><td class="mono">₹1,68,254</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Account breakdown — Sep 2025</div></div>
+    <table class="tbl">
+      <thead><tr><th>Account</th><th>EC2</th><th>RDS</th><th>Other</th><th>Total</th><th>vs Aug</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Production</strong> <span class="mono" style="font-size:10px;color:var(--ink3)">447812345678</span></td><td class="mono">₹62,400</td><td class="mono">₹34,210</td><td class="mono">₹32,480</td><td class="mono" style="font-weight:600">₹1,29,090</td><td><span class="up">↑ 21%</span></td></tr>
+        <tr><td><strong>Staging</strong> <span class="mono" style="font-size:10px;color:var(--ink3)">889923456789</span></td><td class="mono">₹21,601</td><td class="mono">₹3,783</td><td class="mono">₹13,766</td><td class="mono" style="font-weight:600">₹39,150</td><td><span class="up">↑ 8%</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+</div>
+
+<!-- ─── IDLE RESOURCES ────────────────────────────────────────────────────── -->
+<div id="pg-resources" class="pg">
+  <div class="topbar"><div><div class="tb-title">Idle Resources</div><div class="tb-sub" id="res-sub">7 found · ₹41,350/month waste · ₹4.96L/year</div></div><span class="tag tr" style="font-size:11px;padding:4px 10px" id="res-total">₹41,350/mo total waste</span></div>
+  <div style="padding:20px 24px">
+  <div class="alert a-warn" id="res-alert">⚠️ Stopping or deleting these resources saves <strong>₹41,350/month immediately</strong>. That's <strong>₹4.96 lakh/year</strong> back in your budget.</div>
+  <div class="card" id="res-list">
+    <div class="rr" id="res1"><div class="ri">🖥</div><div class="rinfo"><div class="rname">prod-worker-03 <span class="tag tgr">EC2 t3.xlarge</span><span class="tag tr">1.2% CPU</span></div><div class="rmeta">📍 ap-south-1a · Running 24×7 · Last meaningful activity: 18 days ago</div></div><div class="rc"><div class="rcv">₹12,410/mo</div><div class="rcs">idle waste</div></div><button class="btn btn-d btn-sm" onclick="dismissRes('res1',12410)">Dismiss</button></div>
+    <div class="rr" id="res2"><div class="ri">🗄</div><div class="rinfo"><div class="rname">test-db-replica <span class="tag tgr">RDS db.t3.medium</span><span class="tag ta">3.1% connections</span></div><div class="rmeta">📍 ap-south-1 · Read replica · Zero queries in 14 days</div></div><div class="rc"><div class="rcv">₹9,860/mo</div><div class="rcs">idle waste</div></div><button class="btn btn-d btn-sm" onclick="dismissRes('res2',9860)">Dismiss</button></div>
+    <div class="rr" id="res3"><div class="ri">🖥</div><div class="rinfo"><div class="rname">staging-api-01 <span class="tag tgr">EC2 t3.large</span><span class="tag tr">2.8% CPU</span></div><div class="rmeta">📍 ap-south-1b · Staging left running over weekend</div></div><div class="rc"><div class="rcv">₹7,710/mo</div><div class="rcs">idle waste</div></div><button class="btn btn-d btn-sm" onclick="dismissRes('res3',7710)">Dismiss</button></div>
+    <div class="rr" id="res4"><div class="ri">🖥</div><div class="rinfo"><div class="rname">dev-server-02 <span class="tag tgr">EC2 t3.medium</span><span class="tag tr">0.9% CPU</span></div><div class="rmeta">📍 ap-south-1a · Developer left running — last SSH 31 days ago</div></div><div class="rc"><div class="rcv">₹4,630/mo</div><div class="rcs">idle waste</div></div><button class="btn btn-d btn-sm" onclick="dismissRes('res4',4630)">Dismiss</button></div>
+    <div class="rr" id="res5"><div class="ri">💾</div><div class="rinfo"><div class="rname">vol-0abc123def <span class="tag tgr">EBS 500GB gp3</span></div><div class="rmeta">📍 ap-south-1 · Unattached — detached from terminated instance 23 days ago</div></div><div class="rc"><div class="rcv">₹4,320/mo</div><div class="rcs">idle waste</div></div><button class="btn btn-d btn-sm" onclick="dismissRes('res5',4320)">Dismiss</button></div>
+    <div class="rr" id="res6"><div class="ri">💾</div><div class="rinfo"><div class="rname">vol-0def456abc <span class="tag tgr">EBS 200GB gp3</span></div><div class="rmeta">📍 ap-south-1 · Snapshot backup volume — never re-mounted</div></div><div class="rc"><div class="rcv">₹1,750/mo</div><div class="rcs">idle waste</div></div><button class="btn btn-d btn-sm" onclick="dismissRes('res6',1750)">Dismiss</button></div>
+    <div class="rr" id="res7"><div class="ri">🔗</div><div class="rinfo"><div class="rname">eipalloc-0d9f3e <span class="tag tgr">Elastic IP</span></div><div class="rmeta">📍 us-east-1 · 54.198.12.44 — allocated but not associated</div></div><div class="rc"><div class="rcv">₹670/mo</div><div class="rcs">2 idle EIPs</div></div><button class="btn btn-d btn-sm" onclick="dismissRes('res7',670)">Dismiss</button></div>
+  </div>
+  </div>
+</div>
+
+<!-- ─── AWS ACCOUNTS ──────────────────────────────────────────────────────── -->
+<div id="pg-accounts" class="pg">
+  <div class="topbar"><div><div class="tb-title">AWS Accounts</div><div class="tb-sub">2 of 3 connected · Growth plan</div></div><button class="btn btn-p btn-sm" onclick="toggleConnect()">+ Connect account</button></div>
+  <div style="padding:20px 24px">
+
+  <div id="connect-panel" style="display:none" class="card slide-in">
+    <div class="ch"><div class="ct">Connect a new AWS account — 2 steps</div><button class="btn btn-g btn-sm" onclick="toggleConnect()">✕ Close</button></div>
+    <div class="cb">
+      <div class="step-row">
+        <div class="step-num step-done">✓</div>
+        <div class="step-body">
+          <div class="step-title">Step 1 — Copy your unique External ID</div>
+          <div class="step-desc">This ties the IAM role to your CloudGuard account. Do not share it.</div>
+          <div class="code" style="margin-top:8px;letter-spacing:.02em">ExternalId: <span class="str">cg-8f3a2b91-4e7d-49ac-b2c5-d7e1f0a83924</span></div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num step-done">✓</div>
+        <div class="step-body">
+          <div class="step-title">Step 2 — Run this Terraform in your AWS account</div>
+          <div class="step-desc">Creates a read-only IAM role. Copy output <code style="background:#f0f1f3;padding:1px 5px;border-radius:3px">role_arn</code> and paste below.</div>
+          <div class="code" style="font-size:10px"><span class="kw">resource</span> <span class="str">"aws_iam_role"</span> <span class="str">"cloudguard"</span> {<br>  name = <span class="str">"CloudGuardReadOnly"</span><br>  <span class="cm">// ExternalId: cg-8f3a2b91-4e7d...</span><br>}<br><span class="fn">output</span> <span class="str">"role_arn"</span> { value = aws_iam_role.cloudguard.arn }</div>
+        </div>
+      </div>
+      <div class="step-row" style="margin-bottom:0">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Step 3 — Paste the Role ARN</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+            <div><label style="font-size:11px;color:var(--ink3);display:block;margin-bottom:4px">Account nickname</label><input style="width:100%;border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-family:var(--font);font-size:12px;outline:none" placeholder="e.g. Development"></div>
+            <div><label style="font-size:11px;color:var(--ink3);display:block;margin-bottom:4px">AWS Account ID</label><input style="width:100%;border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-family:var(--mono);font-size:12px;outline:none" placeholder="123456789012" maxlength="12"></div>
+          </div>
+          <div style="margin-top:10px"><label style="font-size:11px;color:var(--ink3);display:block;margin-bottom:4px">Role ARN (from terraform output)</label><input style="width:100%;border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-family:var(--mono);font-size:11px;outline:none" placeholder="arn:aws:iam::123456789012:role/CloudGuardReadOnly"></div>
+          <div style="margin-top:12px"><button class="btn btn-p" onclick="toast('✅ Account connected! First sync runs tonight at 06:00 IST');toggleConnect()">Connect account →</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="rr"><div style="width:9px;height:9px;border-radius:50%;background:#22c55e;flex-shrink:0"></div><div class="rinfo"><div style="font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px">Production <span class="mono" style="font-size:11px;color:var(--ink3);background:#f0f1f3;padding:1px 7px;border-radius:4px">447812345678</span><span class="tag tg">Healthy</span></div><div class="rmeta">arn:aws:iam::447812345678:role/CloudGuardReadOnly · Synced today 06:02 IST · 5 months history</div></div><button class="btn btn-g btn-sm" onclick="toast('Account removed. IAM role still exists — delete it from your AWS console.')">Remove</button></div>
+    <div class="rr"><div style="width:9px;height:9px;border-radius:50%;background:#22c55e;flex-shrink:0"></div><div class="rinfo"><div style="font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px">Staging <span class="mono" style="font-size:11px;color:var(--ink3);background:#f0f1f3;padding:1px 7px;border-radius:4px">889923456789</span><span class="tag tg">Healthy</span></div><div class="rmeta">arn:aws:iam::889923456789:role/CloudGuardReadOnly · Synced today 06:04 IST · 3 months history</div></div><button class="btn btn-g btn-sm" onclick="toast('Account removed.')">Remove</button></div>
+    <div style="border-top:1px solid var(--border);padding:20px 18px;text-align:center"><div style="font-size:28px;margin-bottom:8px">☁</div><div style="font-size:13px;font-weight:500;margin-bottom:4px">Add a third account</div><div style="font-size:12px;color:var(--ink3);margin-bottom:12px">Growth plan supports 3 accounts. Add your dev environment.</div><button class="btn btn-p btn-sm" onclick="document.getElementById('connect-panel').style.display='block';window.scrollTo(0,0)">+ Connect account</button></div>
+  </div>
+  </div>
+</div>
+
+<!-- ─── ALERT SETTINGS ────────────────────────────────────────────────────── -->
+<div id="pg-alerts" class="pg">
+  <div class="topbar"><div><div class="tb-title">Alert Settings</div><div class="tb-sub">Budget limits and notification channels</div></div><button class="btn btn-p btn-sm" onclick="toast('✅ Alert settings saved successfully')">Save changes</button></div>
+  <div style="padding:20px 24px;max-width:520px">
+  <div class="card">
+    <div class="ch"><div class="ct">Monthly budget</div></div>
+    <div class="cb">
+      <div style="margin-bottom:16px">
+        <label style="font-size:11px;color:var(--ink3);display:block;margin-bottom:5px">Monthly AWS budget (₹)</label>
+        <div style="position:relative">
+          <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink3)">₹</span>
+          <input type="number" value="200000" id="budget-input" min="10000" step="5000" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:8px 12px 8px 26px;font-family:var(--mono);font-size:13px;outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'" oninput="updateAlertPreview()">
+        </div>
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--ink3);display:block;margin-bottom:6px">Alert threshold: <strong id="pct-label" style="color:var(--blue)">80%</strong> — alert at <strong id="inr-label">₹1,60,000</strong></label>
+        <div class="rng-row">
+          <input type="range" id="pct-range" min="50" max="100" step="5" value="80" oninput="updateAlertPreview()">
+          <span class="rng-val" id="pct-val">80%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--ink4);margin-top:3px"><span>50%</span><span>75%</span><span>100%</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Notification channels</div></div>
+    <div style="padding:0 18px">
+      <div class="trow"><div><div style="font-size:13px;font-weight:500">Email alerts</div><div style="font-size:11px;color:var(--ink3)">abhishekkumarise@gmail.com</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tgl-k"></div></div></div>
+      <div class="trow"><div><div style="font-size:13px;font-weight:500">WhatsApp alerts</div><div style="font-size:11px;color:var(--ink3)">+91 9113173187 (instant)</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tgl-k"></div></div></div>
+      <div class="trow"><div><div style="font-size:13px;font-weight:500">Weekly digest</div><div style="font-size:11px;color:var(--ink3)">Every Monday 08:00 IST</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tgl-k"></div></div></div>
+      <div class="trow"><div><div style="font-size:13px;font-weight:500">Idle resource alerts</div><div style="font-size:11px;color:var(--ink3)">When new idle resources found</div></div><div class="tgl off" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="tgl-k"></div></div></div>
+    </div>
+  </div>
+  <div class="card" style="background:#f6f7f9;border-color:#e4e7ed">
+    <div class="cb"><div style="font-size:12px;font-weight:500;margin-bottom:8px">Live preview — what will trigger alerts</div>
+    <ul style="font-size:12px;color:var(--ink2);list-style:none;display:flex;flex-direction:column;gap:5px">
+      <li>✓ Daily sync at <strong>06:00 IST</strong> — all connected accounts</li>
+      <li>✓ Alert when spend exceeds <strong id="preview-inr">₹1,60,000</strong> (<span id="preview-pct">80%</span> of ₹<span id="preview-budget">2,00,000</span>)</li>
+      <li>✓ Email → <strong>abhishekkumarise@gmail.com</strong></li>
+      <li>✓ WhatsApp → <strong>+91 9113173187</strong></li>
+      <li>✓ Weekly digest every <strong>Monday 08:00 IST</strong></li>
+    </ul></div>
+  </div>
+  </div>
+</div>
+
+<!-- ─── WEEKLY REPORTS ────────────────────────────────────────────────────── -->
+<div id="pg-reports" class="pg">
+  <div class="topbar"><div><div class="tb-title">Weekly Reports</div><div class="tb-sub">Sent every Monday 08:00 IST</div></div><button class="btn btn-p btn-sm" onclick="toast('Test report sent to abhishekkumarise@gmail.com')">Send test report</button></div>
+  <div style="padding:20px 24px">
+  <div class="alert a-ok">✅ Last weekly report sent <strong>Mon Sep 22, 2025 at 08:00 IST</strong> — delivered to abhishekkumarise@gmail.com</div>
+  <div class="card">
+    <div class="ch"><div class="ct">Latest report preview — Week of Sep 22, 2025</div><div class="cs">Auto-generated</div></div>
+    <div class="cb" style="font-family:var(--font);font-size:12.5px;line-height:1.8;color:var(--ink2)">
+      <div style="border:1px solid var(--border);border-radius:8px;padding:20px;background:#fafbfc;font-size:12px">
+        <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px">☁️ CloudGuard — Weekly Digest</div>
+        <div style="font-size:11px;color:var(--ink3);margin-bottom:18px">SGR Info System · Week of Sep 22, 2025</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px">
+          <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center"><div style="font-size:10px;color:var(--ink3);margin-bottom:4px">WEEK SPEND</div><div style="font-size:18px;font-weight:600;color:var(--ink)">₹42,060</div><div style="font-size:10px;color:var(--red)">↑ 18% vs prior week</div></div>
+          <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center"><div style="font-size:10px;color:var(--ink3);margin-bottom:4px">MTD SPEND</div><div style="font-size:18px;font-weight:600;color:var(--ink)">₹1,26,180</div><div style="font-size:10px;color:var(--amber)">63% of budget</div></div>
+          <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center"><div style="font-size:10px;color:var(--ink3);margin-bottom:4px">SAVINGS FOUND</div><div style="font-size:18px;font-weight:600;color:var(--green)">₹41,350</div><div style="font-size:10px;color:var(--ink3)">7 idle resources</div></div>
+        </div>
+        <div style="margin-bottom:14px"><strong style="font-size:12px">Top cost drivers this week</strong><br><span style="color:var(--ink3)">1. EC2 — ₹21,000 (↑12% — 3 instances running at &lt;5% CPU)<br>2. RDS — ₹9,500 (stable)<br>3. CloudFront — ₹5,230 (↑8% — traffic spike Sep 20)</span></div>
+        <div style="margin-bottom:14px"><strong style="font-size:12px">⚡ Action required — 7 idle resources found</strong><br><span style="color:var(--ink3)">Dismissing or stopping these resources saves ₹41,350/month:<br>· prod-worker-03 (EC2 t3.xlarge, 1.2% CPU) — ₹12,410/mo<br>· test-db-replica (RDS db.t3.medium) — ₹9,860/mo<br>· staging-api-01 (EC2 t3.large) — ₹7,710/mo<br>· + 4 more</span></div>
+        <div style="text-align:center;margin-top:14px"><div style="display:inline-block;background:var(--blue);color:white;padding:8px 20px;border-radius:7px;font-size:12px;font-weight:500">View full dashboard →</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Report history</div></div>
+    <table class="tbl">
+      <thead><tr><th>Date</th><th>MTD spend at send</th><th>Idle resources</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Mon Sep 22, 2025 08:00</td><td class="mono">₹1,26,180</td><td>7 found</td><td><span class="tag tg">Delivered</span></td></tr>
+        <tr><td>Mon Sep 15, 2025 08:00</td><td class="mono">₹84,120</td><td>5 found</td><td><span class="tag tg">Delivered</span></td></tr>
+        <tr><td>Mon Sep 8, 2025 08:00</td><td class="mono">₹42,060</td><td>3 found</td><td><span class="tag tg">Delivered</span></td></tr>
+        <tr><td>Mon Sep 1, 2025 08:00</td><td class="mono">₹0 (month start)</td><td>4 found</td><td><span class="tag tg">Delivered</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+</div>
+
+<!-- ─── BILLING ───────────────────────────────────────────────────────────── -->
+<div id="pg-billing" class="pg">
+  <div class="topbar"><div><div class="tb-title">Billing & Plans</div><div class="tb-sub">Growth plan · Renews Oct 1, 2025 · ₹5,999/month</div></div><button class="btn btn-g btn-sm" onclick="toast('Invoice downloaded — cloudguard-sep-2025.pdf')">⬇ Download invoice</button></div>
+  <div style="padding:20px 24px">
+  <div class="g3" style="margin-bottom:18px">
+    <div class="plan-card dim">
+      <div style="font-size:10px;font-weight:500;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Starter</div>
+      <div style="font-size:22px;font-weight:600;letter-spacing:-.5px">₹2,999<span style="font-size:13px;font-weight:400;color:var(--ink3)">/mo</span></div>
+      <div style="font-size:11px;color:var(--ink3);margin:4px 0 14px">1 AWS account</div>
+      <ul style="font-size:12px;color:var(--ink2);list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:16px"><li>✓ Monthly reports</li><li>✓ Email alerts</li><li>✓ Idle resource scan</li></ul>
+      <button class="btn btn-g" style="width:100%;justify-content:center" onclick="toast('Downgrade takes effect at next billing cycle — Oct 1, 2025')">Downgrade</button>
+    </div>
+    <div class="plan-card current">
+      <div class="plan-badge">✓ Current plan</div>
+      <div style="font-size:10px;font-weight:500;color:var(--blue-txt);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Growth</div>
+      <div style="font-size:22px;font-weight:600;letter-spacing:-.5px">₹5,999<span style="font-size:13px;font-weight:400;color:var(--ink3)">/mo</span></div>
+      <div style="font-size:11px;color:var(--ink3);margin:4px 0 14px">3 AWS accounts</div>
+      <ul style="font-size:12px;color:var(--ink2);list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:16px"><li>✓ Weekly reports</li><li>✓ WhatsApp + email</li><li>✓ Savings suggestions</li><li>✓ Priority support (24hr)</li></ul>
+      <button class="btn" style="width:100%;justify-content:center;background:#f0f1f3;color:var(--ink3);cursor:default">Active</button>
+    </div>
+    <div class="plan-card">
+      <div style="font-size:10px;font-weight:500;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Business</div>
+      <div style="font-size:22px;font-weight:600;letter-spacing:-.5px">₹12,999<span style="font-size:13px;font-weight:400;color:var(--ink3)">/mo</span></div>
+      <div style="font-size:11px;color:var(--ink3);margin:4px 0 14px">10 AWS accounts</div>
+      <ul style="font-size:12px;color:var(--ink2);list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:16px"><li>✓ Daily reports</li><li>✓ Custom alert rules</li><li>✓ API access</li><li>✓ Dedicated account manager</li><li>✓ Investor-ready PDF</li></ul>
+      <button class="btn btn-p" style="width:100%;justify-content:center" onclick="toast('Upgrading to Business — you will be charged ₹7,000 prorated today')">Upgrade →</button>
+    </div>
+  </div>
+  <div class="card">
+    <div style="padding:12px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><div style="font-size:12.5px;font-weight:500">Annual plan — save 2 months (₹11,998)</div><button class="btn btn-p btn-sm" onclick="toast('Annual plan: ₹59,988/year — 2 months free vs monthly. Switching now...')">Switch to annual →</button></div>
+    <div class="ch"><div class="ct">Payment history</div></div>
+    <table class="tbl">
+      <thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Sep 1, 2025</td><td>CloudGuard Growth · Monthly · Razorpay</td><td class="mono">₹5,999</td><td><span class="tag tg">Paid</span></td></tr>
+        <tr><td>Aug 1, 2025</td><td>CloudGuard Growth · Monthly · Razorpay</td><td class="mono">₹5,999</td><td><span class="tag tg">Paid</span></td></tr>
+        <tr><td>Jul 1, 2025</td><td>CloudGuard Growth · Monthly · Razorpay</td><td class="mono">₹5,999</td><td><span class="tag tg">Paid</span></td></tr>
+        <tr><td>Jun 1, 2025</td><td>CloudGuard Growth · 30-day trial ended</td><td class="mono">₹5,999</td><td><span class="tag tg">Paid</span></td></tr>
+        <tr><td>May 1, 2025</td><td>CloudGuard Growth · Trial started</td><td class="mono">₹0</td><td><span class="tag tb">Free trial</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /shell -->
+</div><!-- /flex wrapper -->
+
+<div class="toast" id="toast-el"></div>
+
+<script>
+// ── Nav ───────────────────────────────────────────────────────────────────────
+function nav(id, el) {
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('active'))
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'))
+  document.getElementById('pg-' + id).classList.add('active')
+  if (el) el.classList.add('active')
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function toast(msg) {
+  const el = document.getElementById('toast-el')
+  el.textContent = '✓ ' + msg
+  el.classList.add('show')
+  clearTimeout(window._toastTimer)
+  window._toastTimer = setTimeout(() => el.classList.remove('show'), 3500)
+}
+
+// ── Budget bar ────────────────────────────────────────────────────────────────
+setTimeout(() => {
+  const f = document.getElementById('bfill')
+  if (f) f.style.width = '84%'
+  // animate bar charts
+  document.querySelectorAll('.hbar-fill').forEach(b => {
+    setTimeout(() => { b.style.width = b.dataset.w }, 200)
+  })
+}, 400)
+
+// ── Dismiss resource ──────────────────────────────────────────────────────────
+let totalWaste = 41350
+let resCount   = 7
+
+function dismissRes(id, saving) {
+  const el = document.getElementById(id)
+  if (!el) return
+  el.style.animation = 'fadeOut .3s ease forwards'
+  totalWaste -= saving
+  resCount   -= 1
+  setTimeout(() => {
+    el.remove()
+    const s   = document.getElementById('res-sub')
+    const t   = document.getElementById('res-total')
+    const a   = document.getElementById('res-alert')
+    const inr = '₹' + totalWaste.toLocaleString('en-IN')
+    if (s) s.textContent = resCount + ' found · ' + inr + '/month waste'
+    if (t) t.textContent = inr + '/mo total waste'
+    if (a) a.innerHTML  = resCount > 0
+      ? `⚠️ Stopping these resources saves <strong>${inr}/month</strong>.`
+      : `✅ All resources dismissed! Remember to actually stop them in AWS console.`
+    if (resCount === 0 && a) {
+      a.className = 'alert a-ok'
+      const badge = document.querySelector('.ni-badge')
+      if (badge) badge.style.display = 'none'
+    } else {
+      const badge = document.querySelector('.ni-badge')
+      if (badge) badge.textContent = resCount
+    }
+  }, 300)
+  toast(`Dismissed — saves ₹${saving.toLocaleString('en-IN')}/mo once stopped in AWS`)
+}
+
+// ── Connect panel toggle ───────────────────────────────────────────────────────
+function toggleConnect() {
+  const p = document.getElementById('connect-panel')
+  if (p) p.style.display = p.style.display === 'none' ? 'block' : 'none'
+}
+
+// ── Alert settings live preview ───────────────────────────────────────────────
+function updateAlertPreview() {
+  const budget = parseInt(document.getElementById('budget-input')?.value) || 200000
+  const pct    = parseInt(document.getElementById('pct-range')?.value) || 80
+  const inr    = Math.round(budget * pct / 100)
+  const fmtB   = budget.toLocaleString('en-IN')
+  const fmtI   = inr.toLocaleString('en-IN')
+
+  const set = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val }
+  set('pct-label',     pct + '%')
+  set('pct-val',       pct + '%')
+  set('inr-label',     '₹' + fmtI)
+  set('preview-inr',   '₹' + fmtI)
+  set('preview-pct',   pct + '%')
+  set('preview-budget', fmtB)
+}
+</script>
+</body>
+</html>
